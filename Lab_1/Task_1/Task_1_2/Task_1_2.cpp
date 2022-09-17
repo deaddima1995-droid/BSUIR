@@ -11,10 +11,9 @@ int main() {
     const double pi = 3.1415926;
     double z1, z2;
     double angleAlpha;
-    printf_s("Write angle Alpha in Radian:");
-
     
-    do {
+    printf_s("Write angle Alpha in Radian:");
+    while (1) {
         cin >> angleAlpha;
         if (cin.fail()) {
             cin.clear();
@@ -24,7 +23,7 @@ int main() {
         } else {
             break;
         }
-    } while (1);
+    } 
 
     angleAlpha = 180 / pi * angleAlpha;
     printf("Angle Alpha degree : % lf\n", angleAlpha);
