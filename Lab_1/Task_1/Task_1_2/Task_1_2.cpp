@@ -11,22 +11,16 @@ int main() {
     const double pi = 3.1415926;
     double z1, z2;
     double angleAlpha;
-     
     
     printf_s("Write angle Alpha in Radian:");
-    /*
-    while (1) {
-        cin >> angleAlpha;
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "You didn't enter a number" << endl;
-            cout << "Write again: ";
-        } else {
-            break;
-        }
-    } 
-    */
+
+    // Проверка на число
+    while (!(cin >> angleAlpha) || (cin.peek() != '\n')) {
+        cin.clear();
+        while (cin.get() != '\n');
+        cout << "Is not number" << endl;
+        cout << "Write angle Alpha in Radian:";
+    }
 
     angleAlpha = 180 / pi * angleAlpha;
     printf("Angle Alpha degree : % lf\n", angleAlpha);
@@ -36,8 +30,4 @@ int main() {
     z2 = 2 * sqrt(2) * cos(angleAlpha) * sin(pi / 4 + 2 * angleAlpha);
 
     printf("Answer:\nz1 = %f\nz2 = %f", z1, z2);
-}
-bool isNumber(char line[]) {
-    
-    return 0;
 }
