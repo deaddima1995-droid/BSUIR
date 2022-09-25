@@ -17,9 +17,9 @@ int main() {
     // Проверка на число
     while (!(cin >> angleAlpha) || (cin.peek() != '\n')) {
         cin.clear();
-        while (cin.get() != '\n');
-        cout << "Is not number" << endl;
-        cout << "Write angle Alpha in Radian:";
+        while (cin.get() != '\n') {
+        cout << "Is not number" << endl << "Write angle Alpha in Radian:";
+        }
     }
 
     angleAlpha = 180 / pi * angleAlpha;
