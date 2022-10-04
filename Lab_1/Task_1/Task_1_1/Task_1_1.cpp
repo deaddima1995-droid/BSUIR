@@ -13,14 +13,12 @@ int main(void) {
 
 	double z1, z2;
 	double angleRadian;
-	double angleGrade;
 
 	printf("angle in radian = ");
 	scanf_s("%lf", &angleRadian);
 
-	angleGrade = 180 / pi * angleRadian;
-	z1 = (sqrt(pow(3 * angleGrade + 2,2) - 24 * angleGrade)) / (3 * sqrt(angleGrade) - 2 / sqrt(angleGrade));
-	z2 = -sqrt(angleGrade);
+	z1 = (sqrt(pow(3 * angleRadian + 2,2) - 24 * angleRadian)) / (3 * sqrt(angleRadian) - 2 / sqrt(angleRadian));
+	z2 = -sqrt(angleRadian);
 
 	printf("Answer:\n\tz1 = %f\n\tz2 = %f\n", z1, z2);
 	

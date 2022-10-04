@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <math.h>
 
 /* Составить программу для расчёта заданных выражений с проверкой исключительных ситуаций: 
         деление на нуль, вычисление корня из отрицательного числа и т. п. При вводе данных использовать проверку на ввод нечисловых данных.
@@ -10,24 +11,23 @@ using namespace std;
 int main() {
     const double pi = 3.1415926;
     double z1, z2;
-    double angleAlpha;
+    double angleRadian,angleDegree;
     
-    printf_s("Write angle Alpha in Radian:");
+    cout << "Write angle Alpha in Radian:";
 
     // Проверка на число
-    while (!(cin >> angleAlpha) || (cin.peek() != '\n')) {
+    while (!(cin >> angleRadian) || (cin.peek() != '\n')) {
         cin.clear();
-        while (cin.get() != '\n') {
-        cout << "Is not number" << endl << "Write angle Alpha in Radian:";
-        }
+        while (cin.get() != '\n');
+        cout << "Is not a number" << endl << "Please try again:";
     }
 
-    angleAlpha = 180 / pi * angleAlpha;
-    printf("Angle Alpha degree : % lf\n", angleAlpha);
+    angleDegree = 180 / pi * angleRadian;
+    printf("Angle Alpha degree : % lf\n", angleRadian);
     
-    // Деление на нуль невозможно, вычисление корня из отрицательного числа невозможно. Проверка не требуется исходя из задания.
-    z1 = cos(angleAlpha) + sin(angleAlpha) + cos(3 * angleAlpha) + sin(3 * angleAlpha);
-    z2 = 2 * sqrt(2) * cos(angleAlpha) * sin(pi / 4 + 2 * angleAlpha);
+    z1 = cos(angleRadian) + sin(angleRadian) + cos(3 * angleRadian) + sin(3 * angleRadian);
+    z2 = 2 * sqrt(2) * cos(angleRadian) * sin(pi / 4 + 2 * angleRadian);
 
     printf("Answer:\nz1 = %f\nz2 = %f", z1, z2);
+    
 }
