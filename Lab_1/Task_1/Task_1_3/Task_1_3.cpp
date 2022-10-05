@@ -14,7 +14,7 @@ int main() {
 
         f = (pow(y + pow(x - 1, 1.0 / 3), 1.0 / 4)) / (abs(x - y) * (pow(sin(z), 2) + tan(z)));
 
-        if (f != f || f - f != 0) {
+        if (f - f != 0) {
             printf("Your numbers was wrong, answer is %lf\nPlease try again\n", f);
             continue;
         }
