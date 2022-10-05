@@ -11,7 +11,7 @@ using namespace std;
 int main() {
     const double pi = 3.1415926;
     double z1, z2;
-    double angleRadian,angleDegree;
+    double angleRadian;
     
     cout << "Write angle Alpha in Radian:";
 
@@ -20,14 +20,11 @@ int main() {
         cin.clear();
         while (cin.get() != '\n');
         cout << "Is not a number" << endl << "Please try again:";
-    }
-
-    angleDegree = 180 / pi * angleRadian;
-    printf("Angle Alpha degree : % lf\n", angleRadian);
+    } 
     
     z1 = cos(angleRadian) + sin(angleRadian) + cos(3 * angleRadian) + sin(3 * angleRadian);
     z2 = 2 * sqrt(2) * cos(angleRadian) * sin(pi / 4 + 2 * angleRadian);
 
-    printf("Answer:\nz1 = %f\nz2 = %f", z1, z2);
+    printf("Angle Radian is %f\nAnswer:\nz1 = %f\nz2 = %f",angleRadian, z1, z2);
     
 }
