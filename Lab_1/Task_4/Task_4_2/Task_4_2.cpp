@@ -50,7 +50,7 @@ int main() {
 	avarage /= length;
 	cout << endl;
 
-	if (lastIndexZero != -1 && lastIndexZero + 1 < length) {
+	if (lastIndexZero > -1 && lastIndexZero + 1 < length) {
 		for (int i = lastIndexZero + 1; i < length; i++) {
 			if ((float)array[i] <= avarage) {
 				answer *= array[i];
