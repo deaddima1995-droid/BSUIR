@@ -9,65 +9,60 @@
 
 using namespace std;
 
-int getRandomNumber(int max, int min);
-void printArray(int *array, int length);
-
-#define LENGTH_ARRAY	50
-
+#define LENGTH_ARRAY	20
 
 int main() {
 	int array[LENGTH_ARRAY];
 	int length, answer = 1;
 	int lastIndexZero = -1;
-	int avarage = 0;
+	float avarage = 0.0;
+	char choise;
+
 	
 	do {
-		cout << "Write lenght your array:";
+		cout << "Write lenght your array:\t";
 		cin >> length;
 	} while (length > LENGTH_ARRAY || length < 1);
 
-	// Сделать выбор (автоматически или вручную) // ***переделать
-	if (true) {
+	cout << "You want add numbers to array automatic?(Y/N):\t";
+	cin >> choise;
+
+	if (choise == 'Y' || choise == 'y') {
 		for (int i = 0; i < length; i++) {
-			array[i] = rand() % 10;
+			array[i] = -1 + rand() % 10;
+			cout << array[i] << " ";
 			if (array[i] == 0) {
-				lastIndexZero = array[i];
+				lastIndexZero = i;
 			}
 			avarage += array[i];
 		}
 	} else {
-		cout << "Print numbers to your array";
+		cout << "Print numbers to your array with space:\n";
 		for (int i = 0; i < length; i++) {
 			cin >> array[i];
+			cout << array[i] << " ";
 			if (array[i] == 0) {
-				lastIndexZero = array[i];
+				lastIndexZero = i;
 			}
 			avarage += array[i];
 		}
 	}
 	avarage /= length;
-	printArray(array, length);
+	cout << endl;
 
-	if (lastIndexZero != -1 || lastIndexZero == length) {
-		for (int i = lastIndexZero; i < length; i++) {
-			if (array[i] <= avarage && array[i] != 0) {
+	if (lastIndexZero != -1 && lastIndexZero + 1 < length) {
+		for (int i = lastIndexZero + 1; i < length; i++) {
+			if ((float)array[i] <= avarage) {
 				answer *= array[i];
 			}
 		}
+		cout << "Last index of Zero:" << lastIndexZero << endl;
 		cout << "Avarage: " << avarage << endl;
 		cout << "Answer is:" << answer << endl;
+	} else if (lastIndexZero + 1 == length) {
+		cout << "Zero was last";
 	} else {
-		cout << "Ничего не получится";
+		cout << "Array has not zero";
 	}
 
-}
-
-int getRandomNumber(int max, int min) {
-	return min + rand() % max;
-}
-
-void printArray(int *array, int length) {
-	for (int i = 0; i < length; i++) {
-		cout << array[i] << " ";
-	}
 }
