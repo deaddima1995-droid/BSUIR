@@ -38,7 +38,8 @@ int main() {
     }
 
     outFirst.append(text, 0, splitter);
-    outSecond.append(text, nextWord, text.length() - splitter);
+    outSecond.append(text, nextWord, text.length() - nextWord);
+
     cout << text << endl;
     cout << outFirst << endl;
     cout << outSecond << endl;
