@@ -16,8 +16,10 @@
 using namespace std;
 
 struct Student {
-    char firstName[10];
+    char firstName[15];
     int groupNumber;
+    int mathematics[20], physics[20], informatics[20];
+    float avarage;
 };
 
 int main() {
@@ -28,24 +30,25 @@ int main() {
     FILE* fp;
 
     try {
-        fopen_s(&fp, "data.txt", "wb+");
+        fopen_s(&fp, "data.txt", "w");
     } catch (const std::exception&) {
         perror("Error open file");
     }
     fwrite(&first, sizeof(struct Student), 1, fp);
     fwrite(&second, sizeof(struct Student), 1, fp);
+    fwrite(new Student({ "Vasya",101 }), sizeof(struct Student), 1, fp);
     
     fclose(fp);
     
     try {
-        fopen_s(&fp, "data.txt", "rb");
+        fopen_s(&fp, "data.txt", "r");
     }
     catch (const std::exception&) {
         perror("Error open file");
     }
     
     while(fread(&input, sizeof(struct Student), 1, fp))
-    printf("Name - %s, Group - %d", input.firstName, input.groupNumber);
+    printf("Name - %s, Group - %d\n", input.firstName, input.groupNumber);
     
     fclose(fp);
     
