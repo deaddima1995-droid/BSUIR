@@ -1,4 +1,4 @@
-﻿/*Написать программу обработки файла записей, 
+﻿ /*Написать программу обработки файла записей, 
 содержащую следующие пункты меню: «Создание», «Просмотр», «Добавление», «Решение индивидуального задания».
 Каждая запись должна содержать следующую информацию о студентах:
 – фамилия;
@@ -18,13 +18,38 @@ using namespace std;
 struct Student {
     char firstName[10];
     int groupNumber;
-    int markPhisics, markMathematics, markInformatics;
-    float averageOfMarks;
 };
 
 int main() {
-    struct Student first = { "Dima", 101, 8,9,10,(8 + 9 + 10) / 3 };
-    printf("%s", first.firstName);
+    struct Student first = { "Dima", 101};
+    struct Student second = { "Irina", 202 };
+    struct Student input;
+  
+    FILE* fp;
+
+    try {
+        fopen_s(&fp, "data.txt", "wb+");
+    } catch (const std::exception&) {
+        perror("Error open file");
+    }
+    fwrite(&first, sizeof(struct Student), 1, fp);
+    fwrite(&second, sizeof(struct Student), 1, fp);
+    
+    fclose(fp);
+    
+    try {
+        fopen_s(&fp, "data.txt", "rb");
+    }
+    catch (const std::exception&) {
+        perror("Error open file");
+    }
+    
+    while(fread(&input, sizeof(struct Student), 1, fp))
+    printf("Name - %s, Group - %d", input.firstName, input.groupNumber);
+    
+    fclose(fp);
+    
 }
+
 
 
