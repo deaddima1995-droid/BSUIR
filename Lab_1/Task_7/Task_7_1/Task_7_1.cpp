@@ -23,10 +23,6 @@ struct Student {
 };
 
 int main() {
-    struct Student first = { "Dima", 101};
-    struct Student second = { "Irina", 202 };
-    struct Student input;
-  
     FILE* fp;
 
     try {
@@ -34,9 +30,7 @@ int main() {
     } catch (const std::exception&) {
         perror("Error open file");
     }
-    fwrite(&first, sizeof(struct Student), 1, fp);
-    fwrite(&second, sizeof(struct Student), 1, fp);
-    fwrite(new Student({ "Vasya",101 }), sizeof(struct Student), 1, fp);
+
     
     fclose(fp);
     
@@ -52,6 +46,26 @@ int main() {
     
     fclose(fp);
     
+}
+
+int writeStructInFile(FILE* file) {
+    if (fwrite(new Student({ "Vasya",101 }), sizeof(struct Student), 1, file) != sizeof(struct Student)) {
+        return -1;
+    }
+    return 1;
+}
+
+void readStructFromFile(FILE* file,struct Students *students) {
+    struct Student out;
+    int counter = 0;
+    while (fread(&out, sizeof(struct Student), 1, file)) {
+        counter++;
+    }
+    &students = new Student[counter];
+    for (int i = 0; i < counter; i++) {
+        fread(&out, sizeof(struct Student), 1, file);
+        students[i] = out;
+    }
 }
 
 
