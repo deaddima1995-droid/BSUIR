@@ -15,23 +15,29 @@
 
 using namespace std;
 
+void readStructFromFile(FILE* file,struct Student &students);
+int writeStructInFile(FILE* file);
+
 struct Student {
     char firstName[15];
     int groupNumber;
-    int mathematics[20], physics[20], informatics[20];
-    float avarage;
 };
 
 int main() {
+    Student *students = new Student;
+    FILE* file;
+    fopen_s(&file, "student.txt", "w");
+    writeStructInFile(file);
+    readStructFromFile(file, *students);
+    /*
     FILE* fp;
 
     try {
-        fopen_s(&fp, "data.txt", "w");
+        fopen_s(&fp, "data.txt", "r");
     } catch (const std::exception&) {
         perror("Error open file");
     }
-
-    
+    writeStructInFile(fp);
     fclose(fp);
     
     try {
@@ -40,31 +46,45 @@ int main() {
     catch (const std::exception&) {
         perror("Error open file");
     }
-    
-    while(fread(&input, sizeof(struct Student), 1, fp))
-    printf("Name - %s, Group - %d\n", input.firstName, input.groupNumber);
-    
+    Student *now = new Student[5];
+    readStructFromFile(fp, now);
+    for (size_t i = 0; i < sizeof(now); i++)
+    {
+        printf("Name - %s, Group - %d\n", now[i].firstName, now[i].groupNumber);
+    }
     fclose(fp);
     
+    //writeStructInFile(fp);
+    readStructFromFile(fp, now);
+    for (size_t i = 0; i < sizeof(now); i++)
+    {
+        printf("Name - %s, Group - %d\n", now[i].firstName, now[i].groupNumber);
+    }
+    */
 }
 
 int writeStructInFile(FILE* file) {
-    if (fwrite(new Student({ "Vasya",101 }), sizeof(struct Student), 1, file) != sizeof(struct Student)) {
-        return -1;
+    int i;
+    cin >> i;
+    for (int x = 0; x < i; x++){
+        
+        char name[15];
+        int group;
+        cin >> name;
+        cin >> group;
+        Student* temp = new Student();
+        strcpy_s(temp->firstName, name);
+        temp->groupNumber = group;
+        fwrite(temp, sizeof(struct Student), 1, file);
     }
     return 1;
 }
 
-void readStructFromFile(FILE* file,struct Students *students) {
+void readStructFromFile(FILE* file,struct Student &students) {
     struct Student out;
     int counter = 0;
     while (fread(&out, sizeof(struct Student), 1, file)) {
-        counter++;
-    }
-    &students = new Student[counter];
-    for (int i = 0; i < counter; i++) {
-        fread(&out, sizeof(struct Student), 1, file);
-        students[i] = out;
+        printf("Student's name - %s, group - %d", out.firstName, out.groupNumber);
     }
 }
 
