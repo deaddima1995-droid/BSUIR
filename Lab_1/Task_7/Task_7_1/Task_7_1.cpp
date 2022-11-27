@@ -15,8 +15,13 @@
 
 using namespace std;
 
-void readStructFromFile(FILE* file,struct Student &students);
+FILE* file;
+
+void readStructFromFile(FILE* file);
 int writeStructInFile(FILE* file);
+int Menu();
+void CreateFile();
+void OpenFile();
 
 struct Student {
     char firstName[15];
@@ -24,67 +29,84 @@ struct Student {
 };
 
 int main() {
-    Student *students = new Student;
-    FILE* file;
-    fopen_s(&file, "student.txt", "w");
-    writeStructInFile(file);
-    readStructFromFile(file, *students);
-    /*
-    FILE* fp;
 
-    try {
-        fopen_s(&fp, "data.txt", "r");
-    } catch (const std::exception&) {
-        perror("Error open file");
+    while (true) {
+        switch (Menu()) {
+        case 1: CreateFile();   break;
+        case 2: OpenFile();     break;
+        case 0: return 0;
+        default: puts("Write correct number!\n");
+        }
     }
-    writeStructInFile(fp);
-    fclose(fp);
-    
-    try {
-        fopen_s(&fp, "data.txt", "r");
-    }
-    catch (const std::exception&) {
-        perror("Error open file");
-    }
-    Student *now = new Student[5];
-    readStructFromFile(fp, now);
-    for (size_t i = 0; i < sizeof(now); i++)
-    {
-        printf("Name - %s, Group - %d\n", now[i].firstName, now[i].groupNumber);
-    }
-    fclose(fp);
-    
-    //writeStructInFile(fp);
-    readStructFromFile(fp, now);
-    for (size_t i = 0; i < sizeof(now); i++)
-    {
-        printf("Name - %s, Group - %d\n", now[i].firstName, now[i].groupNumber);
-    }
+    /*
+    fopen_s(&file, "student.txt", "wb+");
+    writeStructInFile(file);
+    fclose(file);
+    fopen_s(&file, "student.txt", "rb");
+    readStructFromFile(file);
     */
 }
 
 int writeStructInFile(FILE* file) {
     int i;
     cin >> i;
-    for (int x = 0; x < i; x++){
-        
+    for (int x = 0; x < i; x++){ 
         char name[15];
         int group;
         cin >> name;
         cin >> group;
-        Student* temp = new Student();
-        strcpy_s(temp->firstName, name);
-        temp->groupNumber = group;
-        fwrite(temp, sizeof(struct Student), 1, file);
+        Student temp;
+        strcpy_s(temp.firstName, name);
+        temp.groupNumber = group;
+        fwrite(&temp, sizeof(struct Student), 1, file);
     }
     return 1;
 }
 
-void readStructFromFile(FILE* file,struct Student &students) {
-    struct Student out;
+int Menu() {
+    cout << "Menu:\n";
+    cout << "1. Create File\n";
+    cout << "2. Open File\n";
+    cout << "0. Close program\n";
+    int out;
+    cin >> out;
+    return out;
+}
+
+void CreateFile() {
+    char name[20];
+
+    cout << "Write file name:";
+    cin >> name;
+    try {
+        fopen_s(&file, name, "wb+");
+        fclose(file);
+        cout << "File " << name << " was created\n";
+    } catch (const std::exception&) {
+        cout << "Error with creating file\n";
+    }
+}
+
+void OpenFile() {
+    char name[20];
+
+    cout << "Write file name:";
+    cin >> name;
+
+    if (fopen_s(&file, name, "r+") == NULL) {
+        fclose(file);
+        cout << "File " << name << " was opened\n";
+    } else {
+        cout << "Error with opening " << name << "\n";
+    }
+    
+}
+
+void readStructFromFile(FILE* file) {
+    Student out;
     int counter = 0;
     while (fread(&out, sizeof(struct Student), 1, file)) {
-        printf("Student's name - %s, group - %d", out.firstName, out.groupNumber);
+        printf("Student's name - %s, group - %d\n", out.firstName, out.groupNumber);
     }
 }
 
