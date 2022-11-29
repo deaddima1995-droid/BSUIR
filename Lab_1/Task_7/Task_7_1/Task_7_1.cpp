@@ -20,6 +20,7 @@ FILE* file;
 void readStructFromFile(FILE* file);
 int writeStructInFile(FILE* file);
 int Menu();
+int SubMenuOpenFile();
 void CreateFile();
 void OpenFile();
 
@@ -29,15 +30,33 @@ struct Student {
 };
 
 int main() {
-
     while (true) {
+    MainMenu:
+        //system("cls");
         switch (Menu()) {
-        case 1: CreateFile();   break;
-        case 2: OpenFile();     break;
+
+        case 1:  // CreateFile()
+            system("cls");
+            CreateFile();   break;
+
+        case 2: // Sub menu Open File
+            system("cls");
+            while (true) {
+            SubMenu2:
+                switch (SubMenuOpenFile()) {
+                case 1: break;
+                case 2: break;
+                case 3: break;
+                case 0: goto MainMenu; break;
+                default:
+                    break;
+                }
+            }
+
         case 0: return 0;
         default: puts("Write correct number!\n");
         }
-    }
+    } //system("cls); - очистка консоли
     /*
     fopen_s(&file, "student.txt", "wb+");
     writeStructInFile(file);
@@ -68,6 +87,18 @@ int Menu() {
     cout << "1. Create File\n";
     cout << "2. Open File\n";
     cout << "0. Close program\n";
+    int out;
+    cin >> out;
+    return out;
+}
+
+int SubMenuOpenFile()
+{   
+    cout << "Open File:\n";
+    cout << "1. Read student's list\n";
+    cout << "2. Add student to list\n";
+    cout << "3. Add mark to student\n";
+    cout << "0. Exit to main menu\n";
     int out;
     cin >> out;
     return out;
