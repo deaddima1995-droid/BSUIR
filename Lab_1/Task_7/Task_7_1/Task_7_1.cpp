@@ -17,24 +17,27 @@ using namespace std;
 
 FILE* file;
 
-void readStructFromFile(FILE* file);
-int writeStructInFile(FILE* file);
-int Menu();
-int SubMenuOpenFile();
-void CreateFile();
-
 struct Student {
     char firstName[15];
     int groupNumber;
-    int marksOhisics[20], marksMathematicks[20], marksInformaticks[20];
+    int marks[3][20];
     int personalTasks[3][10];
 };
+
+void readStructFromFile(FILE* file);
+int writeStructInFile(FILE* file);
+int menu();
+int subMenuOpenFile();
+void createFile();
+void addInformationToStudent(Student student);
+
+
 
 int main() {
     while (true) {
     MainMenu:
         
-        switch (Menu()) {
+        switch (menu()) {
 
         case 1: {           // Create File
             char name[20];
@@ -44,7 +47,6 @@ int main() {
                 writeStructInFile(file);
                 cout << "File " << name << " was created";
             }
-            //writeStructInFile(file);
             fclose(file);
             break;
         }
@@ -53,7 +55,7 @@ int main() {
             
             while (true) {
             SubMenu2:
-                switch (SubMenuOpenFile()) {
+                switch (subMenuOpenFile()) {
                 case 1: {                               // Read file
                     char name[20];
                     cout << "Write file name:";
@@ -61,9 +63,34 @@ int main() {
                     fopen_s(&file, name, "rb");
                     readStructFromFile(file);
                     fclose(file);
+                    break;
                 }
                 case 2: {                               // Add Student to file
+                    Student student;
+                    cout << "Write name of student:";
+                    cin >> student.firstName;
+                    cout << "Write number group:";
+                    cin >> student.groupNumber;
+                    for (size_t counter = 0; counter < 3; counter++) {
+                        int countOfMarks;
+                        switch (counter) {
+                        case 0: cout << "Write count marks of phisics:"; break;
+                        case 1: cout << "Write count marks of mathematics:"; break;
+                        case 2: cout << "Write count marks of informatics:"; break;
+                        }
+                        cin >> countOfMarks;
+                        for (int i = 0; i < countOfMarks; i++) {
+                            cin >> student.marks[counter][i];
+                        }
+                    }
 
+                    char name[20];
+                    cout << "Write file name:";
+                    cin >> name;
+                    fopen_s(&file, name, "ab");
+                    fwrite(&student, sizeof(struct Student), 1, file);
+                    fclose(file);
+                    
                     break;
                 }
                 case 3: break;
@@ -80,18 +107,11 @@ int main() {
         case 0: return 0;
         default: puts("Write correct number!\n");
         }
-    } //system("cls); - очистка консоли
-    /*
-    fopen_s(&file, "student.txt", "wb+");
-    writeStructInFile(file);
-    fclose(file);
-    fopen_s(&file, "student.txt", "rb");
-    readStructFromFile(file);
-    */
+    } 
 }
 
 
-int Menu() {
+int menu() {
     cout << "-----Menu-----\n";
     cout << "1. Create File\n";
     cout << "2. Open File\n";
@@ -101,7 +121,7 @@ int Menu() {
     return out;
 }
 
-int SubMenuOpenFile()
+int subMenuOpenFile()
 {   
     cout << "-----Menu-----\n--Open File:--\n";
     cout << "1. Read student's list\n";
@@ -113,7 +133,7 @@ int SubMenuOpenFile()
     return out;
 }
 
-void CreateFile() {
+void createFile() {
     char name[20];
 
     cout << "Write file name:";
@@ -126,6 +146,26 @@ void CreateFile() {
         cout << "Error with creating file\n";
     }
 }
+
+void addInformationToStudent(Student student) {
+    cout << "Write name of student:";
+    cin >> student.firstName;
+    cout << "Write number group:";
+    cin >> student.groupNumber;
+    for (size_t counter = 0; counter < 3; counter++) {
+        int countOfMarks;
+        switch (counter) {
+        case 0: cout << "Write count marks of phisics:"; break;
+        case 1: cout << "Write count marks of mathematics:"; break;
+        case 2: cout << "Write count marks of informatics:"; break;
+        }
+        cin >> countOfMarks;
+        for (int i = 0; i < countOfMarks; i++) {
+            cin >> student.marks[counter][i];
+        }
+    }
+}
+
 
 void readStructFromFile(FILE* file) {
     Student temp;
