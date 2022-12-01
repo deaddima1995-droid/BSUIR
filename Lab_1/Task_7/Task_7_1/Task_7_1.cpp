@@ -22,32 +22,56 @@ int writeStructInFile(FILE* file);
 int Menu();
 int SubMenuOpenFile();
 void CreateFile();
-void OpenFile();
 
 struct Student {
     char firstName[15];
     int groupNumber;
+    int marksOhisics[20], marksMathematicks[20], marksInformaticks[20];
+    int personalTasks[3][10];
 };
 
 int main() {
     while (true) {
     MainMenu:
-        //system("cls");
+        
         switch (Menu()) {
 
-        case 1:  // CreateFile()
-            system("cls");
-            CreateFile();   break;
+        case 1: {           // Create File
+            char name[20];
+            cout << "Write file name:";
+            cin >> name;
+            if ((fopen_s(&file, name, "wb+")) == NULL) {
+                writeStructInFile(file);
+                cout << "File " << name << " was created";
+            }
+            //writeStructInFile(file);
+            fclose(file);
+            break;
+        }
 
         case 2: // Sub menu Open File
-            system("cls");
+            
             while (true) {
             SubMenu2:
                 switch (SubMenuOpenFile()) {
-                case 1: break;
-                case 2: break;
+                case 1: {                               // Read file
+                    char name[20];
+                    cout << "Write file name:";
+                    cin >> name;
+                    fopen_s(&file, name, "rb");
+                    readStructFromFile(file);
+                    fclose(file);
+                }
+                case 2: {                               // Add Student to file
+
+                    break;
+                }
                 case 3: break;
-                case 0: goto MainMenu; break;
+                case 0: {                               // Exit
+                    system("cls");
+                    goto MainMenu; 
+                    break;
+                }
                 default:
                     break;
                 }
@@ -66,24 +90,9 @@ int main() {
     */
 }
 
-int writeStructInFile(FILE* file) {
-    int i;
-    cin >> i;
-    for (int x = 0; x < i; x++){ 
-        char name[15];
-        int group;
-        cin >> name;
-        cin >> group;
-        Student temp;
-        strcpy_s(temp.firstName, name);
-        temp.groupNumber = group;
-        fwrite(&temp, sizeof(struct Student), 1, file);
-    }
-    return 1;
-}
 
 int Menu() {
-    cout << "Menu:\n";
+    cout << "-----Menu-----\n";
     cout << "1. Create File\n";
     cout << "2. Open File\n";
     cout << "0. Close program\n";
@@ -94,10 +103,10 @@ int Menu() {
 
 int SubMenuOpenFile()
 {   
-    cout << "Open File:\n";
+    cout << "-----Menu-----\n--Open File:--\n";
     cout << "1. Read student's list\n";
     cout << "2. Add student to list\n";
-    cout << "3. Add mark to student\n";
+    cout << "3. make personal task for student\n";
     cout << "0. Exit to main menu\n";
     int out;
     cin >> out;
@@ -118,28 +127,25 @@ void CreateFile() {
     }
 }
 
-void OpenFile() {
-    char name[20];
-
-    cout << "Write file name:";
-    cin >> name;
-
-    if (fopen_s(&file, name, "r+") == NULL) {
-        fclose(file);
-        cout << "File " << name << " was opened\n";
-    } else {
-        cout << "Error with opening " << name << "\n";
-    }
-    
-}
-
 void readStructFromFile(FILE* file) {
-    Student out;
-    int counter = 0;
-    while (fread(&out, sizeof(struct Student), 1, file)) {
-        printf("Student's name - %s, group - %d\n", out.firstName, out.groupNumber);
+    Student temp;
+    while (fread(&temp, sizeof(struct Student), 1, file)) {
+        printf("Student's name - %s, group - %d\n", temp.firstName, temp.groupNumber);
     }
 }
 
-
-
+int writeStructInFile(FILE* file) {
+    int i;
+    cin >> i;
+    for (int x = 0; x < i; x++) {
+        char name[15];
+        int group;
+        cin >> name;
+        cin >> group;
+        Student temp;
+        strcpy_s(temp.firstName, name);
+        temp.groupNumber = group;
+        fwrite(&temp, sizeof(struct Student), 1, file);
+    }
+    return 1;
+}
