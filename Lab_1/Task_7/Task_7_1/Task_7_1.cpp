@@ -15,22 +15,23 @@
 
 using namespace std;
 
+constexpr int max_length = 20;
+
 FILE* file;
 
-struct Student {
-    char firstName[15];
-    int groupNumber;
+struct student {
+    char first_name[15];
+    int group_number;
     int marks[3][20];
-    int personalTasks[3][10];
+    int personal_tasks[3][10];
 };
 
 void readStructFromFile(FILE* file);
 int writeStructInFile(FILE* file);
 int menu();
 int subMenuOpenFile();
-void createFile();
-void addInformationToStudent(Student student);
-
+void addInformationToStudent(student student);
+void getFilename(char* name);
 
 
 int main() {
@@ -40,37 +41,45 @@ int main() {
         switch (menu()) {
 
         case 1: {           // Create File
-            char name[20];
-            cout << "Write file name:";
-            cin >> name;
-            if ((fopen_s(&file, name, "wb+")) == NULL) {
+            char* name = new char[20];
+            getFilename(name);
+            if (fopen_s(&file, name, "wb+") == NULL) {
                 writeStructInFile(file);
-                cout << "File " << name << " was created";
+                system("cls");
+                cout << "File " << name << " was created\n";
             }
             fclose(file);
+            delete[] name;
             break;
         }
 
         case 2: // Sub menu Open File
             
             while (true) {
-            SubMenu2:
+            
                 switch (subMenuOpenFile()) {
                 case 1: {                               // Read file
-                    char name[20];
-                    cout << "Write file name:";
-                    cin >> name;
-                    fopen_s(&file, name, "rb");
+                    char* name = new char[max_length];
+                    getFilename(name);
+
+                    if (fopen_s(&file, name, "rb") != NULL) {
+	                    cout << "File can't read";
+                    }
+                    system("cls");
                     readStructFromFile(file);
                     fclose(file);
+                    delete[] name;
                     break;
                 }
-                case 2: {                               // Add Student to file
-                    Student student;
+                case 2: {                               // Add student to file
+                    char* name = new char[max_length];
+                    getFilename(name);
+
+                    student student;
                     cout << "Write name of student:";
-                    cin >> student.firstName;
+                    cin >> student.first_name;
                     cout << "Write number group:";
-                    cin >> student.groupNumber;
+                    cin >> student.group_number;
                     for (size_t counter = 0; counter < 3; counter++) {
                         int countOfMarks;
                         switch (counter) {
@@ -83,12 +92,14 @@ int main() {
                             cin >> student.marks[counter][i];
                         }
                     }
-
-                    char name[20];
-                    cout << "Write file name:";
-                    cin >> name;
+                    system("cls");
                     fopen_s(&file, name, "ab");
-                    fwrite(&student, sizeof(struct Student), 1, file);
+                    if (fwrite(&student, sizeof(struct student), 1, file) != NULL) {
+                        cout << "Student: " << student.first_name << " was added to file " << name << endl;
+                    }
+                    else {
+                        cout << "Error student don't added to file";
+                    }
                     fclose(file);
                     
                     break;
@@ -118,12 +129,12 @@ int menu() {
     cout << "0. Close program\n";
     int out;
     cin >> out;
+    system("cls");
     return out;
 }
 
-int subMenuOpenFile()
-{   
-    cout << "-----Menu-----\n--Open File:--\n";
+int subMenuOpenFile() {   
+    cout << "--Open File:--\n";
     cout << "1. Read student's list\n";
     cout << "2. Add student to list\n";
     cout << "3. make personal task for student\n";
@@ -133,59 +144,63 @@ int subMenuOpenFile()
     return out;
 }
 
-void createFile() {
-    char name[20];
-
-    cout << "Write file name:";
-    cin >> name;
-    try {
-        fopen_s(&file, name, "wb+");
-        fclose(file);
-        cout << "File " << name << " was created\n";
-    } catch (const std::exception&) {
-        cout << "Error with creating file\n";
-    }
-}
-
-void addInformationToStudent(Student student) {
+void addInformationToStudent(student *student) {
     cout << "Write name of student:";
-    cin >> student.firstName;
+    cin >> student->first_name;
     cout << "Write number group:";
-    cin >> student.groupNumber;
+    cin >> student->group_number;
     for (size_t counter = 0; counter < 3; counter++) {
         int countOfMarks;
         switch (counter) {
-        case 0: cout << "Write count marks of phisics:"; break;
+        case 0: cout << "Write count marks of physics:"; break;
         case 1: cout << "Write count marks of mathematics:"; break;
         case 2: cout << "Write count marks of informatics:"; break;
         }
         cin >> countOfMarks;
         for (int i = 0; i < countOfMarks; i++) {
-            cin >> student.marks[counter][i];
+            cin >> student->marks[counter][i];
         }
     }
 }
 
+void getFilename(char* name) {
+    cout << "Write file name:";
+    cin >> name;
+}
+
 
 void readStructFromFile(FILE* file) {
-    Student temp;
-    while (fread(&temp, sizeof(struct Student), 1, file)) {
-        printf("Student's name - %s, group - %d\n", temp.firstName, temp.groupNumber);
+    student temp;
+    while (fread(&temp, sizeof(struct student), 1, file)) {
+        cout << "Student name - " << temp.first_name << "\tGroup - " << temp.group_number << endl;
+        cout << "\tMarks:\n";
+        for (int i = 0; i < 3; i++) {
+	        if (i == 0) {
+                cout << "\t\tPhysics: ";
+	        } else if (i == 1) {
+                cout << "\t\tMathematics: ";
+	        } else if (i == 2) {
+                cout << "\t\tInformatics: ";
+	        }
+            for (int j = 0; j < max_length; j++) {
+	            if (temp.marks[i][j] > 0) {
+                    cout << temp.marks[i][j] << " ";
+	            }
+            }
+            cout << "\n";
+        }
+        cout << "\n";
     }
 }
 
 int writeStructInFile(FILE* file) {
     int i;
+    cout << "\nWrite number count of student:";
     cin >> i;
     for (int x = 0; x < i; x++) {
-        char name[15];
-        int group;
-        cin >> name;
-        cin >> group;
-        Student temp;
-        strcpy_s(temp.firstName, name);
-        temp.groupNumber = group;
-        fwrite(&temp, sizeof(struct Student), 1, file);
+        student *temp = new student;
+        addInformationToStudent(temp);
+        fwrite(temp, sizeof(struct student), 1, file);
     }
     return 1;
 }
