@@ -24,13 +24,19 @@ struct student {
     int group_number;
     int marks[3][20];
     int personal_tasks[3][10];
+    
+    static double getAverageMark(){
+
+        return 0;
+    }
+    
 };
 
 void readStructFromFile(FILE* file);
 int writeStructInFile(FILE* file);
 int menu();
 int subMenuOpenFile();
-void addInformationToStudent(student student);
+void addInformationToStudent(student *student);
 void getFilename(char* name);
 
 
@@ -73,35 +79,22 @@ int main() {
                 }
                 case 2: {                               // Add student to file
                     char* name = new char[max_length];
-                    getFilename(name);
+                	auto *temp = new student;
 
-                    student student;
-                    cout << "Write name of student:";
-                    cin >> student.first_name;
-                    cout << "Write number group:";
-                    cin >> student.group_number;
-                    for (size_t counter = 0; counter < 3; counter++) {
-                        int countOfMarks;
-                        switch (counter) {
-                        case 0: cout << "Write count marks of phisics:"; break;
-                        case 1: cout << "Write count marks of mathematics:"; break;
-                        case 2: cout << "Write count marks of informatics:"; break;
-                        }
-                        cin >> countOfMarks;
-                        for (int i = 0; i < countOfMarks; i++) {
-                            cin >> student.marks[counter][i];
-                        }
-                    }
+                    getFilename(name);
+                    addInformationToStudent(temp);
                     system("cls");
+
                     fopen_s(&file, name, "ab");
-                    if (fwrite(&student, sizeof(struct student), 1, file) != NULL) {
-                        cout << "Student: " << student.first_name << " was added to file " << name << endl;
+                    if (fwrite(temp, sizeof(struct student), 1, file) != NULL) {
+                        cout << "Student: " << temp->first_name << " was added to file " << name << endl;
                     }
                     else {
                         cout << "Error student don't added to file";
                     }
                     fclose(file);
-                    
+                    delete temp;
+                    delete name;
                     break;
                 }
                 case 3: break;
@@ -198,9 +191,10 @@ int writeStructInFile(FILE* file) {
     cout << "\nWrite number count of student:";
     cin >> i;
     for (int x = 0; x < i; x++) {
-        student *temp = new student;
+        auto *temp = new student;
         addInformationToStudent(temp);
         fwrite(temp, sizeof(struct student), 1, file);
+        delete temp;
     }
     return 1;
 }
