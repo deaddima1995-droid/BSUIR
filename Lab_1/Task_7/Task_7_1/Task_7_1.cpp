@@ -15,6 +15,7 @@
 
 using namespace std;
 
+
 constexpr int max_length = 20;
 
 FILE* file;
@@ -60,6 +61,8 @@ void printStudentLintByGroupFromAverageMark(FILE* file);
 
 
 int main() {
+    system("chcp 1251");
+    system("cls");
     while (true) {
     MainMenu:   
         switch (menu()) {
@@ -87,7 +90,7 @@ int main() {
                     setFilename(name);
 
                     if (fopen_s(&file, name, "rb") != NULL) {
-	                    cout << "File can't read";
+	                    cout << "Файл не создан";
                     }
                     system("cls");
                     readStructFromFile(file);
@@ -105,10 +108,10 @@ int main() {
 
                     fopen_s(&file, name, "ab");
                     if (fwrite(temp, sizeof(struct student), 1, file) != NULL) {
-                        cout << "Student: " << temp->first_name << " was added to file " << name << endl;
+                        cout << "Студент: " << temp->first_name << " был добавлен в файл - " << name << endl;
                     }
                     else {
-                        cout << "Error student don't added to file";
+                        cout << "Ошибка, студент не был добавлен в файл";
                     }
                     fclose(file);
                     delete temp;
@@ -136,7 +139,7 @@ int main() {
                 }
                 default: {                              // Если пользователь ввел что-то не верное
                     system("cls");
-                    cout << "Error, please print right number\n";
+                    cout << "Ошибка, введите номер пункта ->\n";
                     goto SubMenu;
                     break;
                 }
@@ -144,17 +147,17 @@ int main() {
             }
 
         case 0: return 0;                               // Выход из программы
-        default: puts("Write correct number!\n");
+        default: puts("Ошибка, введите номер пункта ->\n");
         }
     } 
 }
 
 
 int menu() {
-    cout << "-----Menu-----\n";
-    cout << "1. Create File\n";
-    cout << "2. Open File\n";
-    cout << "0. Close program\n";
+    cout << "-----Меню-----\n";
+    cout << "1. Создать файл\n";
+    cout << "2. Открыть файл\n";
+    cout << "0. Закрыть программу\n";
     int out;
     cin >> out;
     system("cls");
@@ -162,29 +165,29 @@ int menu() {
 }
 
 int subMenuOpenFile() {   
-    cout << "--Open File:--\n";
-    cout << "1. Read student's list\n";
-    cout << "2. Add student to list\n";
-    cout << "3. Make personal task for student\n";
-    cout << "4. Save Text from Binary file\n";
-    cout << "5. Print student with grades above average from group\n";
-    cout << "0. Exit to main menu\n";
+    cout << "--Открыть файл:--\n";
+    cout << "1. Вывести на экран список студентов\n";
+    cout << "2. Добавить студента в файл\n";
+    cout << "3. Выполнить индивидуальное задание для студента\n";
+    cout << "4. Сохранить в текстовый файл\n";
+    cout << "5. Вывести список студентов,определённой группы, со средним баллом выше общего\n";
+    cout << "0. Выйти в основное меню\n";
     int out;
     cin >> out;
     return out;
 }
 
 void addInformationToStudent(student *student) {
-    cout << "Write name of student:";
+    cout << "Введите имя студента:";
     cin >> student->first_name;
-    cout << "Write number group:";
+    cout << "Введите номер группы:";
     cin >> student->group_number;
     for (size_t counter = 0; counter < 3; counter++) {
         int countOfMarks;
         switch (counter) {
-        case 0: cout << "Write count marks of physics:"; break;
-        case 1: cout << "Write count marks of mathematics:"; break;
-        case 2: cout << "Write count marks of informatics:"; break;
+        case 0: cout << "Колличество оценок по физике:"; break;
+        case 1: cout << "Колличество оценок по математике:"; break;
+        case 2: cout << "Колличество оценок по информатике:"; break;
         }
         cin >> countOfMarks;
         for (int i = 0; i < countOfMarks; i++) {
@@ -211,7 +214,7 @@ int makePeronalTask() {
         countOfStudent++;
     }
     fclose(file);
-    cout << "This file has " << countOfStudent << " student's\n";
+    cout << "В этом файле есть  " << countOfStudent << " студентов\n";
 
     auto allStudent = new student*[countOfStudent];
     for (int i = 0; i < countOfStudent; i++) {
@@ -219,9 +222,9 @@ int makePeronalTask() {
     }
 
     student *temp_s_student = new student;
-    cout << "Write name student:";
+    cout << "Имя студента:";
     cin >> temp_s_student->first_name;
-    cout << "Write group student:";
+    cout << "Номер группы:";
     cin >> temp_s_student->group_number;
     string s1;
     s1 = temp_s_student->first_name;
@@ -232,7 +235,7 @@ int makePeronalTask() {
         fread(allStudent[i], sizeof(struct student), 1, file);
         string s2 = allStudent[i]->first_name;
         if (s1 == s2 && allStudent[i]->group_number == temp_s_student->group_number) {
-            cout << "we have student: " << temp_s_student->first_name << "\t" << temp_s_student->group_number << endl;
+            cout << "В файле есть такой студент: " << temp_s_student->first_name << "\t" << temp_s_student->group_number << endl;
             temp_s_student = allStudent[i];
             equalStudent = i;
         }
@@ -246,7 +249,7 @@ int makePeronalTask() {
                 fwrite(allStudent[i], sizeof(struct student), 1, file);
             } else {
                 int mark = 0;
-                cout << "Write mark:";
+                cout << "Введите оценку за персональное задание:";
                 cin >> mark;
                 for (int g = 0; g < 10; g++) {
                     if (temp_s_student->personal_tasks[g] < 0) {
@@ -263,7 +266,7 @@ int makePeronalTask() {
 
         fclose(file);
     } else {
-        cout << "This file don't have this student";
+        cout << "В этом файле нет такого студента";
     }
     delete temp_s_student;
     delete[] allStudent;
@@ -281,7 +284,7 @@ void printStudentLintByGroupFromAverageMark(FILE* file) {
         countOfStudent++;
     }
     fclose(file);
-    cout << "This file has " << countOfStudent << " student's\n";
+    cout << "В этом файле есть " << countOfStudent << " студентов\n";
 
     auto allStudent = new student * [countOfStudent];
     for (int i = 0; i < countOfStudent; i++) {
@@ -297,7 +300,7 @@ void printStudentLintByGroupFromAverageMark(FILE* file) {
     double averageMarkFromGroup = 0;
     int currentGroup;
     int countStudentFromGroup = 0;
-    cout << "Write number group:";
+    cout << "Введите номер группы:";
     cin >> currentGroup;
     for (int i = 0; i < countOfStudent; i++) {
         if (currentGroup == allStudent[i]->group_number) {
@@ -306,9 +309,11 @@ void printStudentLintByGroupFromAverageMark(FILE* file) {
         }
     }
     averageMarkFromGroup /= (double)countStudentFromGroup;
+    cout << "Средняя оценка по группе  №" << currentGroup << " - " << averageMarkFromGroup << "баллов" << endl;
+    
     for (int i = 0; i < countOfStudent; i++) {
         if (currentGroup == allStudent[i]->group_number && averageMarkFromGroup < allStudent[i]->averageMark) {
-            cout << allStudent[i]->first_name << " average:" << allStudent[i]->averageMark << endl;
+            cout << allStudent[i]->first_name << "\tсредний балл:" << allStudent[i]->averageMark << endl;
         }
     }
 }
@@ -317,15 +322,15 @@ void printStudentLintByGroupFromAverageMark(FILE* file) {
 void readStructFromFile(FILE* file) {
     student temp;
     while (fread(&temp, sizeof(struct student), 1, file)) {
-        cout << "Student name - " << temp.first_name << "\tGroup - " << temp.group_number << endl;
-        cout << "\tMarks:\n";
+        cout << "Студент - " << temp.first_name << "\tГруппа - " << temp.group_number << "\tСредний балл - " << temp.averageMark << endl;
+        cout << "\tОценки:\n";
         for (int i = 0; i < 3; i++) {
 	        if (i == 0) {
-                cout << "\t\tPhysics: ";
+                cout << "\t\tФизика: ";
 	        } else if (i == 1) {
-                cout << "\t\tMathematics: ";
+                cout << "\t\tМатематика: ";
 	        } else if (i == 2) {
-                cout << "\t\tInformatics: ";
+                cout << "\t\tИнформатика: ";
 	        }
             for (int j = 0; j < max_length; j++) {
 	            if (temp.marks[i][j] > 0) {
@@ -334,14 +339,13 @@ void readStructFromFile(FILE* file) {
             }
             cout << "\n";
         }
-        cout << "\t\tPersonal task: ";
+        cout << "\t\tИндивидуальные задания: ";
             for (int  i = 0; i < 10; i++) {
                 if (temp.personal_tasks[i] > 0) {
                     cout << temp.personal_tasks[i] << " ";
                 }
             }
         cout << "\n";
-        cout << "Average mark: " << temp.averageMark << endl;
     }
 }
 
@@ -357,7 +361,7 @@ void writeBinaryDataAsText(FILE* file) {
         countStudent++;
     }
     fclose(file);
-    cout << "This file has " << countStudent << " student's\n";
+    cout << "В это файле есть данные " << countStudent << " студентов\n";
 
     auto allStudent = new student * [countStudent];
     for (int i = 0; i < countStudent; i++) {
@@ -372,16 +376,16 @@ void writeBinaryDataAsText(FILE* file) {
     strncpy_s(fileName, fileName, strlen(fileName) - 4);
     strcat_s(fileName, "_out.txt");
     fopen_s(&file, fileName, "wt");
-    fprintf_s(file, "Student's:\n");
+    fprintf_s(file, "Список студентов:\n");
     for (int i = 0; i < countStudent; i++) {
-        fprintf_s(file, "\tStudent name - %s\t Group - %d\t Average mark - %.2lf\n", allStudent[i]->first_name, allStudent[i]->group_number, allStudent[i]->averageMark);
+        fprintf_s(file, "\tИмя - %s\t Группа - %d\t Средний балл - %.2lf\n", allStudent[i]->first_name, allStudent[i]->group_number, allStudent[i]->averageMark);
         for (int g = 0; g < 3; g++) {
             if (g == 0) {
-                fprintf_s(file, "\t\tPhysics: ");
+                fprintf_s(file, "\t\tфизика: ");
             } else if (g == 1) {
-                fprintf_s(file, "\t\tMathematics: ");
+                fprintf_s(file, "\t\tМатематика: ");
             } else {
-                fprintf_s(file, "\t\tInformatics: ");
+                fprintf_s(file, "\t\tИнформатика: ");
             }
             for (int k = 0; k < max_length; k++) {
                 if (allStudent[i]->marks[g][k] > 0) {
@@ -390,7 +394,7 @@ void writeBinaryDataAsText(FILE* file) {
             }
             fprintf_s(file, "\n");
         }
-        fprintf_s(file, "\t\tPersonal task: ");
+        fprintf_s(file, "\t\tИндивидуальные задания: ");
         for (int z = 0; z < 10; z++) {
             if (allStudent[i]->personal_tasks[z] > 0) {
                 fprintf_s(file, "%d ", allStudent[i]->personal_tasks[z]);
@@ -403,7 +407,7 @@ void writeBinaryDataAsText(FILE* file) {
 
 int writeStructInFile(FILE* file) {
     int i;
-    cout << "\nWrite number count of student:";
+    cout << "\nВведите колличество студентов, для добавления в файл:";
     cin >> i;
     for (int x = 0; x < i; x++) {
         auto *temp = new student;
