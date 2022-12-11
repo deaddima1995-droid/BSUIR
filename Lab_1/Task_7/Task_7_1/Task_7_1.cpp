@@ -56,6 +56,7 @@ int subMenuOpenFile();
 void addInformationToStudent(student *student);
 void setFilename(char* name);
 int makePeronalTask();
+void printStudentLintByGroupFromAverageMark();
 
 
 int main() {
@@ -119,8 +120,14 @@ int main() {
                     makePeronalTask(); 
                     break; 
                 }
-                case 4: {
+                case 4: {                               // Запись в текстовый файл данные из бинарного файла
+                    system("cls");
                     writeBinaryDataAsText(file);
+                    break;
+                }
+                case 5: {
+                    printStudentLintByGroupFromAverageMark();
+                    break;
                 }
                 case 0: {                               // Exit
                     system("cls");
@@ -160,6 +167,7 @@ int subMenuOpenFile() {
     cout << "2. Add student to list\n";
     cout << "3. Make personal task for student\n";
     cout << "4. Save Text from Binary file\n";
+    cout << "5. Print student with grades above average from group\n";
     cout << "0. Exit to main menu\n";
     int out;
     cin >> out;
@@ -361,4 +369,7 @@ int writeStructInFile(FILE* file) {
         delete temp;
     }
     return 1;
+}
+
+void printStudentLintByGroupFromAverageMark() {
 }
