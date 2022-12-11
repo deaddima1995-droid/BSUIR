@@ -164,7 +164,7 @@ void setFilename(char* name) {
 
 int makePeronalTask() {
     int countStudent = 0;
-    
+    int equalStudent = -1;
     char name[max_length];
     setFilename(name);
 
@@ -196,9 +196,28 @@ int makePeronalTask() {
         string s2 = allStudent[i]->first_name;
         if (s1 == s2 && allStudent[i]->group_number == temp_s_student->group_number) {
             cout << "we have student: " << temp_s_student->first_name << "\t" << temp_s_student->group_number << endl;
+            temp_s_student = allStudent[i];
+            equalStudent = i;
         }
     }
     fclose(file);
+
+    if (equalStudent != -1) {
+        fopen_s(&file, name, "wb");
+        for (int i = 0; i < countStudent; i++) {
+            if (i != equalStudent) {
+                fwrite(allStudent[i], sizeof(struct student), 1, file);
+            } else {
+                temp_s_student->personal_tasks[0] = 10;
+                fwrite(temp_s_student, sizeof(struct student), 1, file);
+            }
+        }
+
+
+        fclose(file);
+    } else {
+        cout << "This file don't have this student";
+    }
     
 
     return 0;
@@ -225,6 +244,12 @@ void readStructFromFile(FILE* file) {
             }
             cout << "\n";
         }
+        cout << "\t\tPersonal task: ";
+            for (int  i = 0; i < 10; i++) {
+                if (temp.personal_tasks[i] > 0) {
+                    cout << temp.personal_tasks[i] << "\t";
+                }
+            }
         cout << "\n";
     }
 }
