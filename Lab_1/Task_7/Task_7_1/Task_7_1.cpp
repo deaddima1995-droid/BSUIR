@@ -64,7 +64,7 @@ int main() {
     MainMenu:   
         switch (menu()) {
 
-        case 1: {           // Create File
+        case 1: {                                       // Создать бинарный файл
             char* name = new char[20];
             setFilename(name);
             if (fopen_s(&file, name, "wb+") == NULL) {
@@ -82,7 +82,7 @@ int main() {
             while (true) {
             
                 switch (subMenuOpenFile()) {
-                case 1: {                               // Read file
+                case 1: {                               // Вывести на экран данные из бинарного файла
                     char* name = new char[max_length];
                     setFilename(name);
 
@@ -95,7 +95,7 @@ int main() {
                     delete[] name;
                     break;
                 }
-                case 2: {                               // Add student to file
+                case 2: {                               // Добавить студента в бинарный файл
                     char* name = new char[max_length];
                 	auto *temp = new student;
 
@@ -115,7 +115,7 @@ int main() {
                     delete name;
                     break;
                 }
-                case 3: {                               // Make personal task
+                case 3: {                               // Выполнение "персонального" задания
                     system("cls");
                     makePeronalTask(); 
                     break; 
@@ -125,16 +125,16 @@ int main() {
                     writeBinaryDataAsText(file);
                     break;
                 }
-                case 5: {
+                case 5: {                               // Вывести список студентов со средним баллом выше среднего определенной группы 
                     printStudentLintByGroupFromAverageMark();
                     break;
                 }
-                case 0: {                               // Exit
+                case 0: {                               // Выход из под-меню "Open file"
                     system("cls");
                     goto MainMenu; 
                     break;
                 }
-                default: {
+                default: {                              // Если пользователь ввел что-то не верное
                     system("cls");
                     cout << "Error, please print right number\n";
                     goto SubMenu;
@@ -143,7 +143,7 @@ int main() {
                 }
             }
 
-        case 0: return 0;
+        case 0: return 0;                               // Выход из программы
         default: puts("Write correct number!\n");
         }
     } 
