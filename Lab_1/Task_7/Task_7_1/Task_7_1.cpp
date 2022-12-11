@@ -56,7 +56,7 @@ int subMenuOpenFile();
 void addInformationToStudent(student *student);
 void setFilename(char* name);
 int makePeronalTask();
-void printStudentLintByGroupFromAverageMark();
+void printStudentLintByGroupFromAverageMark(FILE* file);
 
 
 int main() {
@@ -126,7 +126,7 @@ int main() {
                     break;
                 }
                 case 5: {                               // Вывести список студентов со средним баллом выше среднего определенной группы 
-                    printStudentLintByGroupFromAverageMark();
+                    printStudentLintByGroupFromAverageMark(file);
                     break;
                 }
                 case 0: {                               // Выход из под-меню "Open file"
@@ -200,7 +200,7 @@ void setFilename(char* name) {
 }
 
 int makePeronalTask() {
-    int countStudent = 0;
+    int countOfStudent = 0;
     int equalStudent = -1;
     char name[max_length];
     setFilename(name);
@@ -208,13 +208,13 @@ int makePeronalTask() {
     student *temp = new student; //
     fopen_s(&file, name, "rb");
     while (fread(temp, sizeof(struct student), 1, file)) {
-        countStudent++;
+        countOfStudent++;
     }
     fclose(file);
-    cout << "This file has " << countStudent << " student's\n";
+    cout << "This file has " << countOfStudent << " student's\n";
 
-    auto allStudent = new student*[countStudent];
-    for (int i = 0; i < countStudent; i++) {
+    auto allStudent = new student*[countOfStudent];
+    for (int i = 0; i < countOfStudent; i++) {
         allStudent[i] = new student;
     }
 
@@ -228,7 +228,7 @@ int makePeronalTask() {
     
 
     fopen_s(&file, name, "rb");
-    for (int i = 0; i < countStudent; i++) {
+    for (int i = 0; i < countOfStudent; i++) {
         fread(allStudent[i], sizeof(struct student), 1, file);
         string s2 = allStudent[i]->first_name;
         if (s1 == s2 && allStudent[i]->group_number == temp_s_student->group_number) {
@@ -241,7 +241,7 @@ int makePeronalTask() {
 
     if (equalStudent != -1) {
         fopen_s(&file, name, "wb");
-        for (int i = 0; i < countStudent; i++) {
+        for (int i = 0; i < countOfStudent; i++) {
             if (i != equalStudent) {
                 fwrite(allStudent[i], sizeof(struct student), 1, file);
             } else {
@@ -268,6 +268,49 @@ int makePeronalTask() {
     delete temp_s_student;
     delete[] allStudent;
     return 0;
+}
+
+void printStudentLintByGroupFromAverageMark(FILE* file) {
+    char fileName[max_length];
+    int countOfStudent = 0;
+    setFilename(fileName);
+
+    student* temp = new student; //
+    fopen_s(&file, fileName, "rb");
+    while (fread(temp, sizeof(struct student), 1, file)) {
+        countOfStudent++;
+    }
+    fclose(file);
+    cout << "This file has " << countOfStudent << " student's\n";
+
+    auto allStudent = new student * [countOfStudent];
+    for (int i = 0; i < countOfStudent; i++) {
+        allStudent[i] = new student;
+    }
+
+    fopen_s(&file, fileName, "rb");
+    for (int i = 0; i < countOfStudent; i++) {
+        fread(allStudent[i], sizeof(struct student), 1, file);
+    }
+    fclose(file);
+
+    double averageMarkFromGroup = 0;
+    int currentGroup;
+    int countStudentFromGroup = 0;
+    cout << "Write number group:";
+    cin >> currentGroup;
+    for (int i = 0; i < countOfStudent; i++) {
+        if (currentGroup == allStudent[i]->group_number) {
+            averageMarkFromGroup += allStudent[i]->averageMark;
+            countStudentFromGroup++;
+        }
+    }
+    averageMarkFromGroup /= (double)countStudentFromGroup;
+    for (int i = 0; i < countOfStudent; i++) {
+        if (currentGroup == allStudent[i]->group_number && averageMarkFromGroup < allStudent[i]->averageMark) {
+            cout << allStudent[i]->first_name << " average:" << allStudent[i]->averageMark << endl;
+        }
+    }
 }
 
 
@@ -369,7 +412,4 @@ int writeStructInFile(FILE* file) {
         delete temp;
     }
     return 1;
-}
-
-void printStudentLintByGroupFromAverageMark() {
 }
