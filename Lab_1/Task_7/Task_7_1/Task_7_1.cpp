@@ -1,14 +1,14 @@
 ﻿ /*Написать программу обработки файла записей, 
 содержащую следующие пункты меню: «Создание», «Просмотр», «Добавление», «Решение индивидуального задания».
 Каждая запись должна содержать следующую информацию о студентах:
-– фамилия;
-– номер группы;
-– оценки за семестр: по физике, математике, информатике;
-– средний балл.
-Организовать ввод исходных данных, средний балл рассчитать по введенным оценкам.
-Содержимое всего файла и результаты решения индивидуального задания записать в текстовый файл.
+– фамилия; +
+– номер группы; +
+– оценки за семестр: по физике, математике, информатике; +
+– средний балл. +
+Организовать ввод исходных данных, средний балл рассчитать по введенным оценкам. +
+Содержимое всего файла и результаты решения индивидуального задания записать в текстовый файл. +
 
-13. Вычислить общий средний балл студентов интересующей вас группы и распечатать список студентов этой группы, 
+13. Вычислить общий средний балл студентов интересующей вас группы и распечатать список студентов этой группы,  -
 имеющих средний балл выше общего.
 */
 #include <iostream>
@@ -24,15 +24,32 @@ struct student {
     int group_number;
     int marks[3][20];
     int personal_tasks[10];
+    double averageMark = 0;
     
-    static double getAverageMark(){
-
-        return 0;
+    double getAverageMark(){
+        int countMarks = 0;
+        int sum = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int g = 0; g < 20; g++) {
+                if (marks[i][g] > 0) {
+                    sum += marks[i][g];
+                    countMarks++;
+                }
+            }
+        }
+        for (int i = 0; i < 10; i++) {
+            if (personal_tasks[i] > 0) {
+                sum += personal_tasks[i];
+                countMarks++;
+            }
+        }
+        return (countMarks == 0) ? 0 : sum / (countMarks * 1.0);
     }
     
 };
 
 void readStructFromFile(FILE* file);
+void writeBinaryDataAsText(FILE* file);
 int writeStructInFile(FILE* file);
 int menu();
 int subMenuOpenFile();
@@ -43,8 +60,7 @@ int makePeronalTask();
 
 int main() {
     while (true) {
-    MainMenu:
-        
+    MainMenu:   
         switch (menu()) {
 
         case 1: {           // Create File
@@ -61,7 +77,7 @@ int main() {
         }
 
         case 2: // Sub menu Open File
-            
+         SubMenu:   
             while (true) {
             
                 switch (subMenuOpenFile()) {
@@ -98,14 +114,25 @@ int main() {
                     delete name;
                     break;
                 }
-                case 3: makePeronalTask(); break;
+                case 3: {                               // Make personal task
+                    system("cls");
+                    makePeronalTask(); 
+                    break; 
+                }
+                case 4: {
+                    writeBinaryDataAsText(file);
+                }
                 case 0: {                               // Exit
                     system("cls");
                     goto MainMenu; 
                     break;
                 }
-                default:
+                default: {
+                    system("cls");
+                    cout << "Error, please print right number\n";
+                    goto SubMenu;
                     break;
+                }
                 }
             }
 
@@ -131,7 +158,8 @@ int subMenuOpenFile() {
     cout << "--Open File:--\n";
     cout << "1. Read student's list\n";
     cout << "2. Add student to list\n";
-    cout << "3. make personal task for student\n";
+    cout << "3. Make personal task for student\n";
+    cout << "4. Save Text from Binary file\n";
     cout << "0. Exit to main menu\n";
     int out;
     cin >> out;
@@ -155,6 +183,7 @@ void addInformationToStudent(student *student) {
             cin >> student->marks[counter][i];
         }
     }
+    student->averageMark = student->getAverageMark();
 }
 
 void setFilename(char* name) {
@@ -208,7 +237,17 @@ int makePeronalTask() {
             if (i != equalStudent) {
                 fwrite(allStudent[i], sizeof(struct student), 1, file);
             } else {
+                int mark = 0;
+                cout << "Write mark:";
+                cin >> mark;
+                for (int g = 0; g < 10; g++) {
+                    if (temp_s_student->personal_tasks[g] < 0) {
+                        temp_s_student->personal_tasks[g] = mark;
+                        break;
+                    }
+                }
                 temp_s_student->personal_tasks[0] = 10;
+                temp_s_student->averageMark = temp_s_student->getAverageMark();
                 fwrite(temp_s_student, sizeof(struct student), 1, file);
             }
         }
@@ -218,8 +257,8 @@ int makePeronalTask() {
     } else {
         cout << "This file don't have this student";
     }
-    
-
+    delete temp_s_student;
+    delete[] allStudent;
     return 0;
 }
 
@@ -247,11 +286,68 @@ void readStructFromFile(FILE* file) {
         cout << "\t\tPersonal task: ";
             for (int  i = 0; i < 10; i++) {
                 if (temp.personal_tasks[i] > 0) {
-                    cout << temp.personal_tasks[i] << "\t";
+                    cout << temp.personal_tasks[i] << " ";
                 }
             }
         cout << "\n";
+        cout << "Average mark: " << temp.averageMark << endl;
     }
+}
+
+void writeBinaryDataAsText(FILE* file) {
+    char fileName[max_length + 4];
+    int countStudent = 0;
+
+    setFilename(fileName);
+    strcat_s(fileName, ".txt");
+    student* temp = new student; //
+    fopen_s(&file, fileName, "rb");
+    while (fread(temp, sizeof(struct student), 1, file)) {
+        countStudent++;
+    }
+    fclose(file);
+    cout << "This file has " << countStudent << " student's\n";
+
+    auto allStudent = new student * [countStudent];
+    for (int i = 0; i < countStudent; i++) {
+        allStudent[i] = new student;
+    }
+    fopen_s(&file, fileName, "rb");
+    for (int i = 0; i < countStudent; i++) {
+        fread(allStudent[i], sizeof(struct student), 1, file);
+    }
+    fclose(file);
+    string tmp = fileName;
+    strncpy_s(fileName, fileName, strlen(fileName) - 4);
+    strcat_s(fileName, "_out.txt");
+    fopen_s(&file, fileName, "wt");
+    fprintf_s(file, "Student's:\n");
+    for (int i = 0; i < countStudent; i++) {
+        fprintf_s(file, "\tStudent name - %s\t Group - %d\t Average mark - %.2lf\n", allStudent[i]->first_name, allStudent[i]->group_number, allStudent[i]->averageMark);
+        for (int g = 0; g < 3; g++) {
+            if (g == 0) {
+                fprintf_s(file, "\t\tPhysics: ");
+            } else if (g == 1) {
+                fprintf_s(file, "\t\tMathematics: ");
+            } else {
+                fprintf_s(file, "\t\tInformatics: ");
+            }
+            for (int k = 0; k < max_length; k++) {
+                if (allStudent[i]->marks[g][k] > 0) {
+                    fprintf_s(file, "%d ", allStudent[i]->marks[g][k]);
+                }
+            }
+            fprintf_s(file, "\n");
+        }
+        fprintf_s(file, "\t\tPersonal task: ");
+        for (int z = 0; z < 10; z++) {
+            if (allStudent[i]->personal_tasks[z] > 0) {
+                fprintf_s(file, "%d ", allStudent[i]->personal_tasks[z]);
+            }
+        }
+        fprintf_s(file, "\n");
+    }
+    fclose(file);
 }
 
 int writeStructInFile(FILE* file) {
