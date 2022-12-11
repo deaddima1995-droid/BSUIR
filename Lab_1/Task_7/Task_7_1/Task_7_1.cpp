@@ -23,7 +23,7 @@ struct student {
     char first_name[15];
     int group_number;
     int marks[3][20];
-    int personal_tasks[3][10];
+    int personal_tasks[10];
     
     static double getAverageMark(){
 
@@ -37,7 +37,8 @@ int writeStructInFile(FILE* file);
 int menu();
 int subMenuOpenFile();
 void addInformationToStudent(student *student);
-void getFilename(char* name);
+void setFilename(char* name);
+int makePeronalTask();
 
 
 int main() {
@@ -48,7 +49,7 @@ int main() {
 
         case 1: {           // Create File
             char* name = new char[20];
-            getFilename(name);
+            setFilename(name);
             if (fopen_s(&file, name, "wb+") == NULL) {
                 writeStructInFile(file);
                 system("cls");
@@ -66,7 +67,7 @@ int main() {
                 switch (subMenuOpenFile()) {
                 case 1: {                               // Read file
                     char* name = new char[max_length];
-                    getFilename(name);
+                    setFilename(name);
 
                     if (fopen_s(&file, name, "rb") != NULL) {
 	                    cout << "File can't read";
@@ -81,7 +82,7 @@ int main() {
                     char* name = new char[max_length];
                 	auto *temp = new student;
 
-                    getFilename(name);
+                    setFilename(name);
                     addInformationToStudent(temp);
                     system("cls");
 
@@ -97,7 +98,7 @@ int main() {
                     delete name;
                     break;
                 }
-                case 3: break;
+                case 3: makePeronalTask(); break;
                 case 0: {                               // Exit
                     system("cls");
                     goto MainMenu; 
@@ -156,9 +157,51 @@ void addInformationToStudent(student *student) {
     }
 }
 
-void getFilename(char* name) {
+void setFilename(char* name) {
     cout << "Write file name:";
     cin >> name;
+}
+
+int makePeronalTask() {
+    int countStudent = 0;
+    
+    char name[max_length];
+    setFilename(name);
+
+    student *temp = new student; //
+    fopen_s(&file, name, "rb");
+    while (fread(temp, sizeof(struct student), 1, file)) {
+        countStudent++;
+    }
+    fclose(file);
+    cout << "This file has " << countStudent << " student's\n";
+
+    auto allStudent = new student*[countStudent];
+    for (int i = 0; i < countStudent; i++) {
+        allStudent[i] = new student;
+    }
+
+    student *temp_s_student = new student;
+    cout << "Write name student:";
+    cin >> temp_s_student->first_name;
+    cout << "Write group student:";
+    cin >> temp_s_student->group_number;
+    string s1;
+    s1 = temp_s_student->first_name;
+    
+
+    fopen_s(&file, name, "rb");
+    for (int i = 0; i < countStudent; i++) {
+        fread(allStudent[i], sizeof(struct student), 1, file);
+        string s2 = allStudent[i]->first_name;
+        if (s1 == s2 && allStudent[i]->group_number == temp_s_student->group_number) {
+            cout << "we have student: " << temp_s_student->first_name << "\t" << temp_s_student->group_number << endl;
+        }
+    }
+    fclose(file);
+    
+
+    return 0;
 }
 
 
