@@ -88,13 +88,20 @@ int main() {
                 case 1: {                               // Вывести на экран данные из бинарного файла
                     char* name = new char[max_length];
                     setFilename(name);
-
-                    if (fopen_s(&file, name, "rb") != NULL) {
-	                    cout << "Файл не создан";
+                    fopen_s(&file, name, "rb");
+                    if (file == NULL) {
+                        system("cls");
+                        cout << "\033[31m" << "Ошибка открытия файла: " << "\033[32m" << name << "\033[0m" << endl;
+                        system("pause");
+                        cin.get();
+                        break;
                     }
                     system("cls");
+                    cout << "\033[32mОткрыт файл: " << name << "\033[0m" << endl;
                     readStructFromFile(file);
-                    fclose(file);
+                    system("pause");
+                    cin.get();
+                    fclose(file);    
                     delete[] name;
                     break;
                 }
@@ -103,10 +110,20 @@ int main() {
                 	auto *temp = new student;
 
                     setFilename(name);
+                    fopen_s(&file, name, "ab");
+                    if (file == NULL) {
+                        system("cls");
+                        cout << "\033[31m" << "Ошибка открытия файла: " << "\033[32m" << name << "\033[0m" << endl;
+                        system("pause");
+                        cin.get();
+                        break;
+                    }
+
+
                     addInformationToStudent(temp);
                     system("cls");
 
-                    fopen_s(&file, name, "ab");
+                    
                     if (fwrite(temp, sizeof(struct student), 1, file) != NULL) {
                         cout << "Студент: " << temp->first_name << " был добавлен в файл - " << name << endl;
                     }
@@ -154,7 +171,7 @@ int main() {
 
 
 int menu() {
-    cout << "-----Меню-----\n";
+    cout << "\033[32m-----Меню-----\033[0m\n";
     cout << "1. Создать файл\n";
     cout << "2. Открыть файл\n";
     cout << "0. Закрыть программу\n";
@@ -165,7 +182,7 @@ int menu() {
 }
 
 int subMenuOpenFile() {   
-    cout << "--Открыть файл:--\n";
+    cout << "\033[32m--Открыть файл:--\033[0m\n";
     cout << "1. Вывести на экран список студентов\n";
     cout << "2. Добавить студента в файл\n";
     cout << "3. Выполнить индивидуальное задание для студента\n";
@@ -190,6 +207,9 @@ void addInformationToStudent(student *student) {
         case 2: cout << "Колличество оценок по информатике:"; break;
         }
         cin >> countOfMarks;
+        if (countOfMarks > 0) {
+            cout << "Вводите оценки:";
+        }
         for (int i = 0; i < countOfMarks; i++) {
             cin >> student->marks[counter][i];
         }
@@ -198,7 +218,7 @@ void addInformationToStudent(student *student) {
 }
 
 void setFilename(char* name) {
-    cout << "Write file name:";
+    cout << "Введите имя файла:";
     cin >> name;
 }
 
@@ -208,13 +228,13 @@ int makePeronalTask() {
     char name[max_length];
     setFilename(name);
 
-    student *temp = new student; //
+    student *temp = new student;
     fopen_s(&file, name, "rb");
     while (fread(temp, sizeof(struct student), 1, file)) {
         countOfStudent++;
     }
     fclose(file);
-    cout << "В этом файле есть  " << countOfStudent << " студентов\n";
+    cout << "Этот файл содержит данные  " << countOfStudent << " студентов\n";
 
     auto allStudent = new student*[countOfStudent];
     for (int i = 0; i < countOfStudent; i++) {
@@ -240,6 +260,8 @@ int makePeronalTask() {
             equalStudent = i;
         }
     }
+    delete temp_s_student;
+    delete[] allStudent;
     fclose(file);
 
     if (equalStudent != -1) {
@@ -266,7 +288,7 @@ int makePeronalTask() {
 
         fclose(file);
     } else {
-        cout << "В этом файле нет такого студента";
+        cout << "В этом файле нет такого студента\n";
     }
     delete temp_s_student;
     delete[] allStudent;
