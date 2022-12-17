@@ -22,7 +22,7 @@ struct student {
     char first_name[MAX_NAME]{};
     int group_number{};
     int marks[3][MAX_LENGTH]{};
-    double averageMark = 0;
+    double averageMark{};
 
     double getAverageMark() {
         int countMarks = 0;
@@ -152,7 +152,7 @@ int main() {
             case 4: {                               // Выполнение индивидуального задания задания. Вывести список студентов со средним баллом выше среднего определенной группы
                 system("cls");
                 char fileName[MAX_LENGTH];
-                int countOfStudent = 0;
+                int countOfStudent{};
                 setFilename(fileName);
                 countOfStudent = getCountOfStudentFromFile(file, fileName);
 
@@ -190,7 +190,7 @@ int main() {
             case 5: {                               // Запись в текстовый файл данные из бинарного файла
                 system("cls");
                 char fileName[MAX_LENGTH + 4];
-                int countStudent = 0;
+                int countStudent{};
 
                 setFilename(fileName);
                 strcat_s(fileName, ".txt");
@@ -243,8 +243,6 @@ int main() {
                 puts("Ошибка, введите номер пункта ->\n");
         }
     }
-
-
 }
 
 int menu() {
@@ -278,6 +276,9 @@ void addInformationToStudent(student *student) {
             case 2:
                 cout << "Колличество оценок по информатике:";
                 break;
+            default:
+                cout << "Ошибка";
+                return;
         }
         cin >> countOfMarks;
         if (countOfMarks > 0) {
@@ -301,7 +302,7 @@ void consolePause() {
 }
 
 int getCountOfStudentFromFile(FILE *file, char *fileName) {
-    student *tempStudent = new student;
+    auto *tempStudent = new student;
     int countOfStudent = 0;
     fopen_s(&file, fileName, "rb");
     if (file == nullptr) {
