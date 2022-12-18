@@ -18,6 +18,8 @@ using namespace std;
 #define MAX_LENGTH 20
 #define MAX_NAME 15
 
+FILE *file;
+
 struct student {
     char first_name[MAX_NAME]{};
     int group_number{};
@@ -48,11 +50,11 @@ void addInformationToStudent(student *student);
 
 void setFilename(char *name);
 
-int getCountOfStudentFromFile(FILE *file, char *fileName);
+int getCountOfStudentFromFile(char *fileName);
 
 
 int main() {
-    FILE *file;
+
 
     system("chcp 1251");
     system("cls");
@@ -152,9 +154,9 @@ int main() {
             case 4: {                               // Выполнение индивидуального задания задания. Вывести список студентов со средним баллом выше среднего определенной группы
                 system("cls");
                 char fileName[MAX_LENGTH];
-                int countOfStudent{};
+                int countOfStudent = 0;
                 setFilename(fileName);
-                countOfStudent = getCountOfStudentFromFile(file, fileName);
+                countOfStudent = getCountOfStudentFromFile(fileName);
 
                 auto allStudent = new student *[countOfStudent];
                 for (int i = 0; i < countOfStudent; i++) {
@@ -178,23 +180,30 @@ int main() {
                     }
                 }
                 averageMarkFromGroup /= (double) countStudentFromGroup;
-                cout << "Средняя оценка по группе  №" << currentGroup << " - " << averageMarkFromGroup << "баллов" << endl;
+                strncpy_s(fileName, fileName, strlen(fileName) - 4);
+                strncat_s(fileName, "_out.txt", 8);
+                fopen_s(&file, fileName, "ab");
+                fprintf_s(file, "Средняя оценка по группе  №%d - %.2lf баллов\n", currentGroup, averageMarkFromGroup);
+                printf("Средняя оценка по группе  №%d - %.2lf баллов\n", currentGroup, averageMarkFromGroup);
                 cout << "Студенты имеющие средний балл выше общего:\n";
+                fprintf_s(file, "Студенты имеющие средний балл выше общего:\n");
                 for (int i = 0; i < countOfStudent; i++) {
                     if (currentGroup == allStudent[i]->group_number && averageMarkFromGroup < allStudent[i]->averageMark) {
                         cout << allStudent[i]->first_name << "\tсредний балл: " << allStudent[i]->averageMark << endl;
+                        fprintf_s(file, "%s - средний балл - %.2lf\n", allStudent[i]->first_name, allStudent[i]->averageMark);
                     }
                 }
+                fclose(file);
                 break;
             }
             case 5: {                               // Запись в текстовый файл данные из бинарного файла
                 system("cls");
                 char fileName[MAX_LENGTH + 4];
-                int countStudent{};
+                int countStudent = 0;
 
                 setFilename(fileName);
                 strcat_s(fileName, ".txt");
-                countStudent = getCountOfStudentFromFile(file,fileName);
+                countStudent = getCountOfStudentFromFile(fileName);
                 auto allStudent = new student *[countStudent];
                 for (int i = 0; i < countStudent; i++) {
                     allStudent[i] = new student;
@@ -218,7 +227,7 @@ int main() {
                               allStudent[i]->group_number, allStudent[i]->averageMark);
                     for (int g = 0; g < 3; g++) {
                         if (g == 0) {
-                            fprintf_s(file, "\t\tфизика: ");
+                            fprintf_s(file, "\t\tФизика: ");
                         } else if (g == 1) {
                             fprintf_s(file, "\t\tМатематика: ");
                         } else {
@@ -234,6 +243,7 @@ int main() {
                     fprintf_s(file, "\n");
                 }
                 fclose(file);
+                // данные записаны
                 break;
             }
             case 0:
@@ -248,9 +258,9 @@ int main() {
 int menu() {
     cout << "\033[32m-----Меню-----\033[0m\n";
     cout << "1. Создать файл\n";
-    cout << "2. Вывести на экран данные\n";
+    cout << "2. Просмотр файла\n";
     cout << "3. Добавить студента в файл\n";
-    cout << "4. Вывести список студентов,определённой группы, со средним баллом выше общего\n";
+    cout << "4. Список студентов группы со средним баллом выше общего\n";
     cout << "5. Сохранить из бинарного файла в текстовый файл\n";
     cout << "0. Закрыть программу\n";
     int out;
@@ -301,7 +311,7 @@ void consolePause() {
     cin.get();
 }
 
-int getCountOfStudentFromFile(FILE *file, char *fileName) {
+int getCountOfStudentFromFile(char *fileName) {
     auto *tempStudent = new student;
     int countOfStudent = 0;
     fopen_s(&file, fileName, "rb");
