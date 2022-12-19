@@ -74,7 +74,8 @@ int main() {
 
                     }
                     system("cls");
-                    cout << "File " << fileName << " was created\n";
+                    cout << "\033[31m" << "File "<< "\033[32m"  << fileName << " was created\n" << "\033[0m";
+                    consolePause();
                     fclose(file);
                 }
                 delete[] fileName;
@@ -86,8 +87,7 @@ int main() {
                 fopen_s(&file, fileName, "rb");
                 if (file == nullptr) {
                     system("cls");
-                    cout << "\033[31m" << "Ошибка открытия файла: " << "\033[32m" << fileName << "\033[0m"
-                         << endl;
+                    cout << "\033[31m" << "Ошибка открытия файла: " << "\033[32m" << fileName << "\033[0m" << endl;
                     consolePause();
                     break;
                 }
@@ -127,24 +127,23 @@ int main() {
                 char *fileName = new char[MAX_LENGTH];
                 auto *tmpStudent = new student;
                 setFilename(fileName);
+                if (getCountOfStudentFromFile(fileName) == -1) break;
 
                 fopen_s(&file, fileName, "ab");
                 if (file == nullptr) {
                     system("cls");
                     cout << "\033[31m" << "Ошибка открытия файла: " << "\033[32m" << fileName << "\033[0m"
                          << endl;
-                    system("pause");
-                    cin.get();
+                    consolePause();
                     break;
                 }
                 addInformationToStudent(tmpStudent);
                 system("cls");
 
-                if (fwrite(tmpStudent, sizeof(struct student), 1, file) == sizeof(struct student)) {
-                    cout << "Студент: " << tmpStudent->first_name << " был добавлен в файл - " << fileName << endl;
-                } else {
-                    cout << "Ошибка, ввода данных";
-                }
+                fwrite(tmpStudent, sizeof(struct student), 1, file);
+                cout << "Студент: " << tmpStudent->first_name << " был добавлен в файл - " << fileName << endl;
+
+                consolePause();
                 fclose(file);
 
                 delete tmpStudent;
@@ -154,10 +153,10 @@ int main() {
             case 4: {                               // Выполнение индивидуального задания задания. Вывести список студентов со средним баллом выше среднего определенной группы
                 system("cls");
                 char fileName[MAX_LENGTH];
-                int countOfStudent = 0;
+                int countOfStudent{};
                 setFilename(fileName);
                 countOfStudent = getCountOfStudentFromFile(fileName);
-
+                if (countOfStudent == -1) break;
                 auto allStudent = new student *[countOfStudent];
                 for (int i = 0; i < countOfStudent; i++) {
                     allStudent[i] = new student;
@@ -179,8 +178,12 @@ int main() {
                         countStudentFromGroup++;
                     }
                 }
+                if(countStudentFromGroup == 0) {
+                    cout << "\033[31m" << "Нет студентов такой группы\n" << "\033[0m";
+                    consolePause();
+                    break;
+                }
                 averageMarkFromGroup /= (double) countStudentFromGroup;
-                strncpy_s(fileName, fileName, strlen(fileName) - 4);
                 strncat_s(fileName, "_out.txt", 8);
                 fopen_s(&file, fileName, "ab");
                 fprintf_s(file, "Средняя оценка по группе  №%d - %.2lf баллов\n", currentGroup, averageMarkFromGroup);
@@ -193,6 +196,8 @@ int main() {
                         fprintf_s(file, "%s - средний балл - %.2lf\n", allStudent[i]->first_name, allStudent[i]->averageMark);
                     }
                 }
+                consolePause();
+                system("cls");
                 fclose(file);
                 break;
             }
@@ -202,23 +207,18 @@ int main() {
                 int countStudent = 0;
 
                 setFilename(fileName);
-                strcat_s(fileName, ".txt");
                 countStudent = getCountOfStudentFromFile(fileName);
+                if (countStudent == -1) break;
+
                 auto allStudent = new student *[countStudent];
                 for (int i = 0; i < countStudent; i++) {
                     allStudent[i] = new student;
                 }
                 fopen_s(&file, fileName, "rb");
-                if (file == nullptr) {
-                    cout << "Ошибка открытия " << fileName << endl;
-                    break;
-                }
                 for (int i = 0; i < countStudent; i++) {
                     fread(allStudent[i], sizeof(struct student), 1, file);
                 }
                 fclose(file);
-                string tmp = fileName;
-                strncpy_s(fileName, fileName, strlen(fileName) - 4);
                 strcat_s(fileName, "_out.txt");
                 fopen_s(&file, fileName, "wt");
                 fprintf_s(file, "Список студентов:\n");
@@ -243,7 +243,8 @@ int main() {
                     fprintf_s(file, "\n");
                 }
                 fclose(file);
-                // данные записаны
+                cout << "\033[31m" << "Данные записаны в файл: " << "\033[32m" << fileName << "\033[0m" << endl;
+                consolePause();
                 break;
             }
             case 0:
@@ -276,26 +277,31 @@ void addInformationToStudent(student *student) {
     cin >> student->group_number;
     for (size_t counter = 0; counter < 3; counter++) {
         int countOfMarks;
-        switch (counter) {
-            case 0:
-                cout << "Колличество оценок по физике:";
-                break;
-            case 1:
-                cout << "Колличество оценок по математике:";
-                break;
-            case 2:
-                cout << "Колличество оценок по информатике:";
-                break;
-            default:
-                cout << "Ошибка";
-                return;
-        }
-        cin >> countOfMarks;
+        do {
+            switch (counter) {
+                case 0:
+                    cout << "Колличество оценок по физике:";
+                    break;
+                case 1:
+                    cout << "Колличество оценок по математике:";
+                    break;
+                case 2:
+                    cout << "Колличество оценок по информатике:";
+                    break;
+                default:
+                    cout << "Ошибка";
+                    return;
+            }
+            cin >> countOfMarks;
+        } while(countOfMarks < 0 || countOfMarks > MAX_LENGTH);
+
         if (countOfMarks > 0) {
             cout << "Введите оценки:";
         }
         for (int i = 0; i < countOfMarks; i++) {
-            cin >> student->marks[counter][i];
+            do {
+                cin >> student->marks[counter][i];
+            } while (student->marks[counter][i] > 10);
         }
     }
     student->averageMark = student->getAverageMark();
@@ -316,8 +322,8 @@ int getCountOfStudentFromFile(char *fileName) {
     int countOfStudent = 0;
     fopen_s(&file, fileName, "rb");
     if (file == nullptr) {
-        cout << "Ошибка: в данном файле нет студентов или файл отсутствует";
-        return 0;
+        cout << "\033[31m" << "Ошибка открытия файла\n" << "\033[0m";
+        return -1;
     }
     while (fread(tempStudent, sizeof(struct student), 1, file)) {
         countOfStudent++;
