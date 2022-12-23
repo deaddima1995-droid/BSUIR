@@ -3,7 +3,7 @@
 
 using namespace std;
 
-double getDouble(string message);
+double getNumber(string message);
 int getInt();
 
 
@@ -12,10 +12,10 @@ int main() {
     double fx = 0;
     int chooseFx;
 
-    z = getDouble("z:");
-    n = getDouble("n:");
-    k = getDouble("k:");
-    m = getDouble("m:");
+    z = getNumber("z:");
+    n = getNumber("n:");
+    k = getNumber("k:");
+    m = getNumber("m:");
     chooseFx = getInt();
 
     if (z > 1) {
@@ -55,7 +55,7 @@ int main() {
     printf("Answer:\n%lf = sin(%.2lf * %.2lf) + cos(%.2lf * %.2lf) + ln(%.2lf * %.2lf)", y,n,fx,k,x,m,x);
 }
 
-double getDouble(string message) {
+double getNumber(string message) {
     double out;
     message = "Write " + message;
 

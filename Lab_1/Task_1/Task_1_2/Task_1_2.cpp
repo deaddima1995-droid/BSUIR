@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#include <math.h>
+#include <cmath>
 
 /* Составить программу для расчёта заданных выражений с проверкой исключительных ситуаций: 
         деление на нуль, вычисление корня из отрицательного числа и т. п. При вводе данных использовать проверку на ввод нечисловых данных.
@@ -9,8 +9,8 @@
 using namespace std;
 
 int main() {
-    const double pi = 3.1415926;
-    double z1, z2;
+    constexpr  double pi = 3.1415926;
+    double z1{}, z2{};
     double angleRadian;
     
     cout << "Write angle Alpha in Radian:";
@@ -25,6 +25,6 @@ int main() {
     z1 = cos(angleRadian) + sin(angleRadian) + cos(3 * angleRadian) + sin(3 * angleRadian);
     z2 = 2 * sqrt(2) * cos(angleRadian) * sin(pi / 4 + 2 * angleRadian);
 
-    printf("Angle Radian is %f\nAnswer:\nz1 = %f\nz2 = %f",angleRadian, z1, z2);
-    
+    printf("Angle Radian is %f\nAnswer:\nz1 = %f\nz2 = %f\n",angleRadian, z1, z2);
+    system("pause");
 }

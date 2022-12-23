@@ -1,29 +1,30 @@
 ﻿#include <iostream>
-#include <math.h>
+#include <cmath>
 
 using namespace std;
-double getDouble(string text);
+double getNumber(string message);
 
 int main() {
     double x, y, z, f;
 
     while (true) {
-        x = getDouble("x:");
-        y = getDouble("y:");
-        z = getDouble("z:");
+        x = getNumber("x:");
+        y = getNumber("y:");
+        z = getNumber("z:");
 
-        f = (pow(y + pow(x - 1, 1.0 / 3), 1.0 / 4)) / (abs(x - y) * (pow(sin(z), 2) + tan(z)));
+        f = (pow(y + pow(x - 1, 1.0 / 3), 1.0 / 4)) / (fabs(x - y) * (pow(sin(z), 2) + tan(z)));
 
         if (f - f != 0) {
             printf("Your numbers was wrong, answer is %lf\nPlease try again\n", f);
             continue;
         }
         break;
-    }
+    } 
     printf("x = %lf\t y = %lf\t z = %lf\nAnswer = %lf", x, y, z, f);
+    system("pause");
 }
 
-double getDouble(string message) {
+double getNumber(string message) {
 
     double out;
     message = "Write " + message;

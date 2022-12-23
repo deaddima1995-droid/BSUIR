@@ -11,12 +11,12 @@ using namespace std;
 
 double getMax(double x, double y);
 double getMin(double x, double y);
-double getDouble(string message);
+double getNumber(string message);
 
 int main() {
     double x, y, F;
-    x = getDouble("x:");
-    y = getDouble("y:");
+    x = getNumber("x:");
+    y = getNumber("y:");
 
     if (abs(x) + abs(y) <= 1 || x >= 0) {
         F = getMax(x, y) + sqrt(x);
@@ -48,7 +48,7 @@ double getMin(double x, double y) {
     return x;
 }
 
-double getDouble(string message) {
+double getNumber(string message) {
     double out;
     message = "Write " + message;
 
