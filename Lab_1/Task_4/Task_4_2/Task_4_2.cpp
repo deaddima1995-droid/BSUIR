@@ -5,27 +5,29 @@
 
 Вычислить произведение элементов массива, расположенных после
 последнего нулевого элемента и не превышающих среднее арифметическое.
-*/
+*/ 
 
 using namespace std;
 
 #define LENGTH_ARRAY	20
 
 int main() {
-	int array[LENGTH_ARRAY];
-	int length, answer = 1;
+	
+	int length;
 	int lastIndexZero = -1;
-	float avarage = 0.0;
+	double average = 0.0, answer = 1.0;
 	char choise;
 
 	
 	do {
-		cout << "Write lenght your array:\t";
+		cout << "Write length your array:\t";
 		cin >> length;
 	} while (length > LENGTH_ARRAY || length < 1);
 
 	cout << "You want add numbers to array automatic?(Y/N):\t";
 	cin >> choise;
+
+	auto *array = new int[LENGTH_ARRAY]{};
 
 	if (choise == 'Y' || choise == 'y') {
 		for (int i = 0; i < length; i++) {
@@ -34,7 +36,7 @@ int main() {
 			if (array[i] == 0) {
 				lastIndexZero = i;
 			}
-			avarage += array[i];
+			average += (double) array[i];
 		}
 	} else {
 		cout << "Print numbers to your array with space:\n";
@@ -44,25 +46,25 @@ int main() {
 			if (array[i] == 0) {
 				lastIndexZero = i;
 			}
-			avarage += array[i];
+			average += array[i];
 		}
 	}
-	avarage /= length;
+	average /= (double)length;
 	cout << endl;
 
 	if (lastIndexZero > -1 && lastIndexZero + 1 < length) {
 		for (int i = lastIndexZero + 1; i < length; i++) {
-			if ((float)array[i] <= avarage) {
+			if ((double)array[i] <= average) {
 				answer *= array[i];
 			}
 		}
 		cout << "Last index of Zero:" << lastIndexZero << endl;
-		cout << "Avarage: " << avarage << endl;
+		cout << "Average: " << average << endl;
 		cout << "Answer is:" << answer << endl;
 	} else if (lastIndexZero + 1 == length) {
 		cout << "Zero was last";
 	} else {
 		cout << "Array has not zero";
 	}
-
+	delete[] array;
 }

@@ -18,14 +18,14 @@ int main() {
     x = getNumber("x:");
     y = getNumber("y:");
 
-    if (abs(x) + abs(y) <= 1 || x >= 0) {
+    if (fabs(x) + fabs(y) <= 1 || x >= 0) {
         F = getMax(x, y) + sqrt(x);
         printf("%.2lf = max(%.2lf,%.2lf) + sqrt(%.2lf)", F, x, y, x);
-    } else if (abs(x) + abs(y) > 0 || (x < 0 && y < 0)) {
+    } else if (fabs(x) + fabs(y) > 0 || (x < 0 && y < 0)) {
         F = getMin(x, y) + pow(sin(x), 2) - cos(y * y);
         printf("%.2lf = min(%.2lf,%.2lf) + sin^2(%.2lf) - cos(%.2lf)^2",F, x, y, x, y);
     } else {
-        F = exp(x * x + abs(y));
+        F = exp(x * x + fabs(y));
         printf("%.2lf = e^%.2lf&2 + |%.2lf|", F, x, y);
     }
 
@@ -35,17 +35,11 @@ int main() {
 }
 
 double getMax(double x, double y) {
-    if (x > y) {
-        return x;
-    }
-    return y;
+    return (x > y)? x : y;
 }
 
 double getMin(double x, double y) {
-    if (x > y) {
-        return y;
-    }
-    return x;
+    return (x < y)? x : y;
 }
 
 double getNumber(string message) {

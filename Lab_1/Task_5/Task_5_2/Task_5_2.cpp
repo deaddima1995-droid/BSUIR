@@ -43,5 +43,9 @@ int main() {
         }
     }
     cout << "Max value:" << max << endl;
+    for(int i = 0; i < lines;i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
 }
 
