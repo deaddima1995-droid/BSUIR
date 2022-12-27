@@ -2,20 +2,22 @@
 Разбить исходную строку на две подстроки, причем первая длиной k символов, 
 если на k-ю позицию попадает слово, то его следует отнести ко второй строке. 
 Значение k вводится с клавиатуры.*/
-
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+
+
 
 using namespace std;
 
 int main() {
     int splitter, nextWord;
-    string text = "My brothers are very smart and work hard in school";
-    string outFirst, outSecond;
+    char text[] = "My brothers are very smart and work hard in school";
+    char *outFirst, *outSecond;
     
     do {
         cout << "Write number of symbol:";
         cin >> splitter;
-    } while (splitter < 1 || splitter > (int) text.length());
+    } while (splitter < 1 || splitter > sizeof(text));
 
     for (int i = splitter; i >= 0; i--) {
         if (text[i] == ' ') {
@@ -27,7 +29,7 @@ int main() {
     }
 
     if (text[splitter] == ' ') {
-      for (int i = splitter; i < (int) text.length(); i++) {
+      for (int i = splitter; i < sizeof(text); i++) {
           if (text[i] != ' ') {
               nextWord = i;
               break;
@@ -36,9 +38,18 @@ int main() {
     } else {
         nextWord = splitter;
     }
+    outFirst = new char[nextWord]{};
+    outSecond = new char[sizeof(text) - nextWord]{};
+    for (int i = 0; i < nextWord; i++) {
+        outFirst[i] = text[i];
+    }
+    for (int i = nextWord; i < (int) strlen(text); i++) {
+        outSecond[i] = text[i - nextWord];
+    }
 
-    outFirst.append(text, 0, splitter);
-    outSecond.append(text, nextWord, text.length() - nextWord);
+
+    //outFirst.append(text, 0, splitter);
+    //outSecond.append(text, nextWord, text.length() - nextWord);
 
     cout << text << endl;
     cout << outFirst << endl;
