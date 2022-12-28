@@ -3,7 +3,13 @@
 редь, передается в качестве параметра в функцию вывода (Out_Rez).*/
 #include <iostream>
 
-int main() {
+using namespace std;
 
-    std::cout << "Hello World!\n";
+int main() {
+    
+    cout << "Hello World!\n";
+}
+
+void Out_Rez(double a, double b, double h) {
+
 }
