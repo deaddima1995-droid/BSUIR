@@ -3,9 +3,8 @@
 если на k-ю позицию попадает слово, то его следует отнести ко второй строке. 
 Значение k вводится с клавиатуры.*/
 #define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
-
-
 
 using namespace std;
 
@@ -40,13 +39,12 @@ int main() {
     }
     outFirst = new char[nextWord]{};
     outSecond = new char[sizeof(text) - nextWord]{};
-    for (int i = 0; i < nextWord; i++) {
-        outFirst[i] = text[i];
-    }
-    for (int i = nextWord; i < (int) strlen(text); i++) {
-        outSecond[i] = text[i - nextWord];
-    }
 
+    strncat(outFirst, text, nextWord);
+
+    for (int i = nextWord; i < (int) strlen(text); i++) {
+        outSecond[i - nextWord] = text[i];
+    }
 
     //outFirst.append(text, 0, splitter);
     //outSecond.append(text, nextWord, text.length() - nextWord);
@@ -54,4 +52,7 @@ int main() {
     cout << text << endl;
     cout << outFirst << endl;
     cout << outSecond << endl;
+
+    delete outFirst;
+    delete outSecond;
 }
