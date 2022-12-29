@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int factorial(int number);
+double factorial(double number);
 
 int main() {
     double a, b, h, sX, yX;
@@ -28,14 +28,14 @@ int main() {
         sX = 0;
         yX = 2 * (pow(cos(x), 2) - 1);
         
-        for (double i = 1; i <= n; i++) {
-            sX += pow(-1, i) * (pow(2 * x,2 * i) / factorial(2 * i));
+        for (double k = 1; k <= n; k++) {
+            sX += pow(-1, k) * (pow(2 * x,2 * k) / factorial(2 * k));
         }
-        printf("%.6lf\t%.6lf\tdelta %lf\n",yX,sX,abs(sX - yX));
+        printf("%.6lf\t%.6lf\tdelta %lf\n",yX,sX,fabs(sX - yX));
     }
 }
 
-int factorial(int number) {
+double factorial(double number) {
     if (number == 0) {
         return 1;
     }
