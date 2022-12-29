@@ -7,13 +7,13 @@ using namespace std;
 
 void Out_Rez(double function(double x), double a, double b, double h);
 double fun_sX(double x);
-double fun_yS(double x);
+double fun_sY(double x);
 double factorial(double number);
 
 int main() {
     Out_Rez(fun_sX, 0.1, 1, 0.1);
     cout << endl;
-    Out_Rez(fun_yS, 0.1, 1, 0.1);
+    Out_Rez(fun_sY, 0.1, 1, 0.1);
 }
 
 void Out_Rez(double function(double x), double a, double b, double h) {
@@ -30,7 +30,7 @@ double fun_sX(double x) {
     return sX;
 }
 
-double fun_yS(double x) {
+double fun_sY(double x) {
     return 2 * (pow(cos(x), 2) - 1);;
 }
 
