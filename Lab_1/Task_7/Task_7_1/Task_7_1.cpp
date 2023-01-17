@@ -260,7 +260,7 @@ int main() {
                 auto tempStudent = getArrayFromFile(fileName, countOfStudent);
                 char* name = new char[MAX_NAME];
                 int numberGroup{};
-                int makes = -1;
+                int makes{};
                 cout << "Введите имя студента:";
                 cin >> name;
                 cout << "Введите номер группы:";
@@ -271,15 +271,15 @@ int main() {
                 for (int i = 0; i < countOfStudent; i++) {
                     if (strcmp(tempStudent[i]->first_name, name) == 0 && tempStudent[i]->group_number == numberGroup) {
                         makes = 1;
+                        cout << "Студент - " << name << " № " << numberGroup << " удален из файла " << fileName << endl;
                     } else {
                         fwrite(tempStudent[i], sizeof(struct student), 1, file);
                     }
                 }
 
                 fclose(file);
-                if (makes == 1) {
-                    cout << "Студент - " << name << " № " << numberGroup << " удален из файла " << fileName << endl;
-                } else {
+
+                if (makes != 1) {
                     cout << "Студент - " << name << " № " << numberGroup << " отсутствует в файле " << fileName << endl;
                 }
                 consolePause();
