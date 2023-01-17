@@ -55,6 +55,8 @@ int getCountOfStudentFromFile(char *fileName);
 
 student** getArrayFromFile(char* fileName, int students);
 
+bool sortByAlphava(char* first, char* second);
+
 int main() {
 
 
@@ -159,15 +161,8 @@ int main() {
                 setFilename(fileName);
                 countOfStudent = getCountOfStudentFromFile(fileName);
                 if (countOfStudent == -1) break;
-                auto allStudent = new student *[countOfStudent];
-                for (int i = 0; i < countOfStudent; i++) {
-                    allStudent[i] = new student;
-                }
-                fopen_s(&file, fileName, "rb");
-                for (int i = 0; i < countOfStudent; i++) {
-                    fread(allStudent[i], sizeof(struct student), 1, file);
-                }
-                fclose(file);
+                auto allStudent = getArrayFromFile(fileName, countOfStudent);
+                
 
                 double averageMarkFromGroup = 0;
                 int currentGroup;
@@ -212,15 +207,8 @@ int main() {
                 countStudent = getCountOfStudentFromFile(fileName);
                 if (countStudent == -1) break;
 
-                auto allStudent = new student *[countStudent];
-                for (int i = 0; i < countStudent; i++) {
-                    allStudent[i] = new student;
-                }
-                fopen_s(&file, fileName, "rb");
-                for (int i = 0; i < countStudent; i++) {
-                    fread(allStudent[i], sizeof(struct student), 1, file);
-                }
-                fclose(file);
+                auto allStudent = getArrayFromFile(fileName, countStudent);
+                
                 strcat_s(fileName, "_out.txt");
                 fopen_s(&file, fileName, "wt");
                 fprintf_s(file, "Список студентов:\n");
@@ -250,17 +238,53 @@ int main() {
                 break;
             }
             case 6: {                                                             // Редактирование записи студента
-                                                                                        // имя
-                                                                                        // оценку
+                char fileName[MAX_LENGTH];
+                setFilename(fileName);
+                int countOfStudent = getCountOfStudentFromFile(fileName);
+                if (countOfStudent < 1) {
+                    cout << "В файле нет данных студентов\n";
+                    break;
+                }
+                char* name = new char[MAX_NAME];
+                int numberGroup{};
+                auto tempStudent = getArrayFromFile(fileName, countOfStudent);
+                cout << "Введите имя студента:";
+                cin >> name;
+                cout << "Введите номер группы:";
+                cin >> numberGroup;
+                bool isMade{};
+
+                fopen_s(&file, fileName, "wb+");
+                for (int i = 0; i < countOfStudent; i++) {
+                    if (strcmp(tempStudent[i]->first_name, name) == 0 && tempStudent[i]->group_number == numberGroup && !isMade) {
+                        auto temp = new student;
+                        addInformationToStudent(temp);
+                        fwrite(temp, sizeof(struct student), 1, file);
+                        cout << "Студент - " << name << " № " << numberGroup << " изменен " << fileName << endl;
+                        delete temp;
+                        isMade = true;
+                    }
+                    else {
+                        fwrite(tempStudent[i], sizeof(struct student), 1, file);
+                    }
+                }
+                if (!isMade) cout << "Студент - " << name << " № " << numberGroup << " отсутствует в файле " << fileName << endl;
+                fclose(file);
+
+                break;
             }
             case 7: {                                                             // Удаление записи студента
                 char fileName[MAX_LENGTH];
                 setFilename(fileName);
                 int countOfStudent = getCountOfStudentFromFile(fileName);
+                if (countOfStudent < 1) {
+                    cout << "В файле нет данных студентов\n";
+                    break;
+                }
                 auto tempStudent = getArrayFromFile(fileName, countOfStudent);
                 char* name = new char[MAX_NAME];
                 int numberGroup{};
-                int makes{};
+                bool isMade{};
                 cout << "Введите имя студента:";
                 cin >> name;
                 cout << "Введите номер группы:";
@@ -270,7 +294,7 @@ int main() {
                 fopen_s(&file, fileName, "wb+");
                 for (int i = 0; i < countOfStudent; i++) {
                     if (strcmp(tempStudent[i]->first_name, name) == 0 && tempStudent[i]->group_number == numberGroup) {
-                        makes = 1;
+                        isMade = true;
                         cout << "Студент - " << name << " № " << numberGroup << " удален из файла " << fileName << endl;
                     } else {
                         fwrite(tempStudent[i], sizeof(struct student), 1, file);
@@ -279,7 +303,7 @@ int main() {
 
                 fclose(file);
 
-                if (makes != 1) {
+                if (!isMade) {
                     cout << "Студент - " << name << " № " << numberGroup << " отсутствует в файле " << fileName << endl;
                 }
                 consolePause();
@@ -287,10 +311,73 @@ int main() {
                 break;
                 
             }
-            case 8: {                                                             // Сортировка по алфавиту (фамилия)
-                                                                    
-            }
+            case 8: {                                                             // Сортировка по номеру группы
+                char fileName[MAX_LENGTH];
+                setFilename(fileName);
+                int countOfStudent = getCountOfStudentFromFile(fileName);
+                if (countOfStudent < 1) {
+                    cout << "В файле нет данных студентов\n";
+                    break;
+                }
+                auto tempStudent = getArrayFromFile(fileName, countOfStudent);
 
+                int z = 1;
+                while (z < countOfStudent) {
+                    if (tempStudent[z - 1]->group_number <= tempStudent[z]->group_number) {
+                        z += 1;
+                    } else {
+                        auto temp = new student;
+                        temp = tempStudent[z];
+                        tempStudent[z] = tempStudent[z - 1];
+                        tempStudent[z - 1] = temp;
+                        if (z > 1) {
+                            z -= 1;
+                        }
+                    }
+
+                }
+                fopen_s(&file, fileName, "wb+");
+                for (int i = 0; i < countOfStudent; i++) {
+                    fwrite(tempStudent[i], sizeof(struct student), 1, file);
+                }
+                fclose(file);
+                
+                break;
+            }
+            case 9: {                                               // Сортировка по алфавиту
+                char fileName[MAX_LENGTH];
+                setFilename(fileName);
+                int countOfStudent = getCountOfStudentFromFile(fileName);
+                if (countOfStudent < 1) {
+                    cout << "В файле нет данных студентов\n";
+                    break;
+                }
+                auto tempStudent = getArrayFromFile(fileName, countOfStudent);
+
+                int z = 1;
+                while (z < countOfStudent) {
+                    if (!sortByAlphava(tempStudent[z]->first_name, tempStudent[z - 1]->first_name)) {
+                        z += 1;
+                    }
+                    else {
+                        auto temp = new student;
+                        temp = tempStudent[z - 1];
+                        tempStudent[z - 1] = tempStudent[z];
+                        tempStudent[z] = temp;
+                        if (z > 1) {
+                            z -= 1;
+                        }
+                    }
+
+                }
+                fopen_s(&file, fileName, "wb+");
+                for (int i = 0; i < countOfStudent; i++) {
+                    fwrite(tempStudent[i], sizeof(struct student), 1, file);
+                }
+                fclose(file);
+                cout << "Файл отсортирован";
+                break;
+            }
             case 0:
                 return 0;
                 // Выход из программы
@@ -307,7 +394,10 @@ int menu() {
     cout << "3. Добавить студента в файл\n";
     cout << "4. Список студентов группы со средним баллом выше общего\n";
     cout << "5. Сохранить из бинарного файла в текстовый файл\n";
+    cout << "6. Редактировать данные студента\n";
     cout << "7. Удалить запись по имени и группе\n";
+    cout << "8. Сортировать данные по группам\n";
+    cout << "9. Сортировать данные по алфавиту\n";
     cout << "0. Закрыть программу\n";
     int out;
     cin >> out;
@@ -389,4 +479,19 @@ student** getArrayFromFile(char* fileName,int students) {
     }
     fclose(file);
     return tempStudent;
+}
+
+bool sortByAlphava(char* first, char* second) {
+    for (int i = 0; i < MAX_NAME; i++) {
+        if ((int)first[i] >= 65 && (int)first[i] <= 90) first[i] += 32;
+        if ((int)second[i] >= 65 && (int)second[i] <= 90) second[i] += 32;
+        if (first[i] < second[i]) {
+            cout << first[i] << "\t" << second[i] << "\n";
+             return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
 }
