@@ -12,6 +12,7 @@
 имеющих средний балл выше общего.
 */
 #include <iostream>
+#include <string.h>
 
 using namespace std;
 
@@ -52,6 +53,7 @@ void setFilename(char *name);
 
 int getCountOfStudentFromFile(char *fileName);
 
+student** getArrayFromFile(char* fileName, int students);
 
 int main() {
 
@@ -247,6 +249,48 @@ int main() {
                 consolePause();
                 break;
             }
+            case 6: {                                                             // Редактирование записи студента
+                                                                                        // имя
+                                                                                        // оценку
+            }
+            case 7: {                                                             // Удаление записи студента
+                char fileName[MAX_LENGTH];
+                setFilename(fileName);
+                int countOfStudent = getCountOfStudentFromFile(fileName);
+                auto tempStudent = getArrayFromFile(fileName, countOfStudent);
+                char* name = new char[MAX_NAME];
+                int numberGroup{};
+                int makes = -1;
+                cout << "Введите имя студента:";
+                cin >> name;
+                cout << "Введите номер группы:";
+                cin >> numberGroup;
+
+                
+                fopen_s(&file, fileName, "wb+");
+                for (int i = 0; i < countOfStudent; i++) {
+                    if (strcmp(tempStudent[i]->first_name, name) == 0 && tempStudent[i]->group_number == numberGroup) {
+                        makes = 1;
+                    } else {
+                        fwrite(tempStudent[i], sizeof(struct student), 1, file);
+                    }
+                }
+
+                fclose(file);
+                if (makes == 1) {
+                    cout << "Студент - " << name << " № " << numberGroup << " удален из файла " << fileName << endl;
+                } else {
+                    cout << "Студент - " << name << " № " << numberGroup << " отсутствует в файле " << fileName << endl;
+                }
+                consolePause();
+                system("cls");
+                break;
+                
+            }
+            case 8: {                                                             // Сортировка по алфавиту (фамилия)
+                                                                    
+            }
+
             case 0:
                 return 0;
                 // Выход из программы
@@ -263,6 +307,7 @@ int menu() {
     cout << "3. Добавить студента в файл\n";
     cout << "4. Список студентов группы со средним баллом выше общего\n";
     cout << "5. Сохранить из бинарного файла в текстовый файл\n";
+    cout << "7. Удалить запись по имени и группе\n";
     cout << "0. Закрыть программу\n";
     int out;
     cin >> out;
@@ -331,4 +376,17 @@ int getCountOfStudentFromFile(char *fileName) {
     fclose(file);
     cout << "Этот файл содержит данные  " << countOfStudent << " студентов\n";
     return countOfStudent;
+}
+
+student** getArrayFromFile(char* fileName,int students) {
+    auto tempStudent = new student*[students];
+    for (int i = 0; i < students; i++) {
+        tempStudent[i] = new student;
+    }
+    fopen_s(&file, fileName, "rb");
+    for (int i = 0; i < students; i++){
+        fread(tempStudent[i], sizeof(struct student), 1, file);
+    }
+    fclose(file);
+    return tempStudent;
 }
