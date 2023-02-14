@@ -16,6 +16,7 @@
 */
 #include <iostream>
 #include <fstream>
+#include <time.h>
 
 
 #define OPTION_CREATING  ios::out |ios::trunc | ios::binary
@@ -25,23 +26,49 @@
 
 using namespace std;
 
+int GetRandomNumber(int min, int max);
+
+char month[3][10] = { "January", "February", "March" };
+
+string daysOfWeek[7] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday" };
+string cities[5] = { "Misnk", "Mogilev", "Brest", "Vitebsk", "Grodno"};
 
 
 struct Time {
-    Time() {}
+    Time() {
+        this->hour = GetRandomNumber(0, 23);
+        this->minute = GetRandomNumber(0, 59);
+    }
     Time(int hour, int minute) {
         this->hour = hour;
         this->minute = minute;
     }
-    int hour, minute;
+    int hour{}, minute{};
 };
 
 
 struct Train {
-    Time departureTime{};
-    int departureDate{};
-    char destination[15];
-    uint32_t freeSpace{};
+    /*
+    Train() {
+        this->departureTime = new Time();
+        this->departureDate = daysOfWeek[GetRandomNumber(0, 6)];
+        this->destination = cities[GetRandomNumber(0,4)];
+        this->freeSpace = GetRandomNumber(0, 10);
+    }
+    Train(Time* departureTime, string departureDate, string destination, int freeSpace) {
+        this->departureTime = departureTime;
+        this->departureDate = departureDate;
+        this->destination = destination;
+        this->freeSpace = freeSpace;
+    }
+    Time *departureTime;
+    */
+    Train(int space) {
+        this->freeSpace = space;
+    }
+    char departureDate[10];
+    char departureTime{};
+    int freeSpace;
 };
 
 Train** getTrains();
@@ -53,12 +80,25 @@ void addTrainToFile();
 
 int main() {
 
-    //ofstream out;
-    //out.open("cash.bin", OPTION_CREATING);
-    cout << "Hello World!\n";
-    char name[9];
-    cin >> name;
-    createFile(name);
+    srand(time(NULL));
+    fstream file;
+
+    Train* in = new Train(55);
+    in->freeSpace = 56;
+    cin >> in->departureDate;
+
+    file.open("test", fstream::out | fstream::binary);
+    file.write((char*)&in, sizeof(Train));
+    file.close();
+
+    Train* out{};
+    file.open("test", fstream::in | fstream::binary);
+    file.read((char*)&out, sizeof(Train));
+    cout << "File was created\n";
+    file.close();
+
+    cout << "Free space - " << out->freeSpace << endl;
+    cout << "Desteny - " << out->departureDate << endl;
 }
 
 Train** getTrains()
@@ -67,6 +107,7 @@ Train** getTrains()
 }
 
 void createFile(char* name){ 
+    /*
     ofstream file;
     file.open(name, OPTION_CREATING);
     if (!file.is_open()) {
@@ -83,12 +124,40 @@ void createFile(char* name){
     }
     cout << "File " << name << " was created\n";
     file.close();
+    */
 }
 
 void readFile(char* name) {
+    /*
+    fstream file;
+    file.open("test", fstream::out | fstream::binary);
+    if (!file.is_open()) {
+        system("cls");
+        cerr << "Error, " << name << " file can't create\n";
+        return;
+    }
+    Train* temp = new Train();
+    file.write((char*)&temp, sizeof(Train));
+    file.close();
+
+    Train* out{};
+    file.open("test", fstream::in | fstream::binary);
+    file.read((char*)&out->freeSpace, sizeof(out->freeSpace));
+    int count = 0;
+   
+        count++;
+
     
+    cout << "File " << name << " was created\n";
+    file.close();
+    cout << "Число поездов в файле - " << count << endl;
+    cout << "Free space - " << out->freeSpace << endl;
+    */
 }
 
-void addTrainToFile()
-{
+void addTrainToFile() {
+}
+
+int GetRandomNumber(int min, int max) {
+    return min + rand() % (max - min + 1);
 }
