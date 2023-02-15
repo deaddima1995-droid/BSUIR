@@ -49,6 +49,7 @@ struct Time {
 
 struct Train {
     /*
+    * Строки нельзя т.к нету велечины занимаемой памяти
     Train() {
         this->departureTime = new Time();
         this->departureDate = daysOfWeek[GetRandomNumber(0, 6)];
@@ -67,7 +68,7 @@ struct Train {
         this->freeSpace = space;
     }
     char departureDate[10];
-    char departureTime{};
+    Time *departureTime{};
     int freeSpace;
 };
 
