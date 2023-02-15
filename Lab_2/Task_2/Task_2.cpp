@@ -28,10 +28,9 @@ using namespace std;
 
 int GetRandomNumber(int min, int max);
 
-char month[3][10] = { "January", "February", "March" };
+ char daysOfWeek[7][10] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday" };
+ char cities[5][10] = { "Misnk", "Mogilev", "Brest", "Vitebsk", "Grodno" };
 
-string daysOfWeek[7] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday" };
-string cities[5] = { "Misnk", "Mogilev", "Brest", "Vitebsk", "Grodno"};
 
 
 struct Time {
@@ -48,27 +47,11 @@ struct Time {
 
 
 struct Train {
-    /*
-    * Строки нельзя т.к нету велечины занимаемой памяти
-    Train() {
-        this->departureTime = new Time();
-        this->departureDate = daysOfWeek[GetRandomNumber(0, 6)];
-        this->destination = cities[GetRandomNumber(0,4)];
-        this->freeSpace = GetRandomNumber(0, 10);
-    }
-    Train(Time* departureTime, string departureDate, string destination, int freeSpace) {
-        this->departureTime = departureTime;
-        this->departureDate = departureDate;
-        this->destination = destination;
-        this->freeSpace = freeSpace;
-    }
+    
+
     Time *departureTime;
-    */
-    Train(int space) {
-        this->freeSpace = space;
-    }
-    char departureDate[10];
-    Time *departureTime{};
+    //char departureDate[10];
+    char destination[10]; 
     int freeSpace;
 };
 
@@ -77,29 +60,42 @@ void createFile(char* name);
 void readFile(char* name);
 void addTrainToFile();
 
-
+FILE *file;
 
 int main() {
+    char* fileName = new char[10];
+    cin >> fileName;
 
-    srand(time(NULL));
-    fstream file;
 
-    Train* in = new Train(55);
-    in->freeSpace = 56;
-    cin >> in->departureDate;
 
-    file.open("test", fstream::out | fstream::binary);
-    file.write((char*)&in, sizeof(Train));
-    file.close();
+    if (fopen_s(&file, fileName, "wb+") == NULL) {
+        auto* temp = new Train;
+        temp->freeSpace = GetRandomNumber(0, 10);
+        temp->departureTime = new Time();
+        memcpy(temp->destination, cities[GetRandomNumber(0, 4)], sizeof(temp->destination));
+        for (int i = 0; i < 10; i++)
+        {
+            fwrite(temp, sizeof(struct Train), 1, file);
+            temp->freeSpace = GetRandomNumber(0, 10);
+            temp->departureTime = new Time();
+            memcpy(temp->destination, cities[GetRandomNumber(0, 4)], sizeof(temp->destination));
+        }
+    }
+    fclose(file);
 
-    Train* out{};
-    file.open("test", fstream::in | fstream::binary);
-    file.read((char*)&out, sizeof(Train));
-    cout << "File was created\n";
-    file.close();
+    fopen_s(&file, fileName, "rb");
+    if (file == nullptr) {
+        system("cls");
+        cout << "\033[31m" << "Ошибка открытия файла: " << "\033[32m" << fileName << "\033[0m" << endl;
+        return 0;
+    }
 
-    cout << "Free space - " << out->freeSpace << endl;
-    cout << "Desteny - " << out->departureDate << endl;
+    auto* out = new Train;
+    while (fread(out, sizeof(struct Train), 1, file)) {
+        cout << "Train -" << out->destination << " space -" << out->freeSpace << "\tTime" << out->departureTime->hour << endl;
+    }
+
+
 }
 
 Train** getTrains()
