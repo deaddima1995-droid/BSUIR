@@ -19,8 +19,8 @@
 #include <time.h>
 
 
-#define OPTION_READING "rb"
-#define OPTION_WRIATING "wb+"
+#define OPTION_READING fstream::in | fstream::binary
+#define OPTION_WRIATING fstream::out | fstream::binary
 #define LENGHT_CHAR_ARRAY 10
 
 
@@ -48,6 +48,10 @@ struct Time {
 
 struct Train {
     Train() {
+        this->departureTime = Time(0,0);
+        this->freeSpace = 0;
+    }
+    Train(bool) {
         this->departureTime = Time();
         memcpy(this->departureDate, cities[GetRandomNumber(0, 6)], sizeof(this->departureDate));
         memcpy(this->destination, cities[GetRandomNumber(0, 4)], sizeof(this->destination));
@@ -55,8 +59,8 @@ struct Train {
     }
     
     Time departureTime;
-    char departureDate[LENGHT_CHAR_ARRAY];
-    char destination[LENGHT_CHAR_ARRAY];
+    char departureDate[LENGHT_CHAR_ARRAY]{};
+    char destination[LENGHT_CHAR_ARRAY]{};
     int freeSpace{};
 };
 
@@ -68,7 +72,15 @@ void addTrainToFile();
 FILE *file;
 
 int main() {
-    
+    setlocale(LC_ALL, "ru");
+    srand(time(NULL));
+    char* name{};
+    cout << "Имя файла:";
+    cin >> name;
+    createFile(name);
+    cout << "\n";
+    readFile(name);
+
 }
 
 Train** getTrains()
@@ -77,11 +89,41 @@ Train** getTrains()
 }
 
 void createFile(char* name){ 
+    fstream file;
     
+    file.open(name, OPTION_WRIATING);
+    if (!file.is_open()) {
+        cerr << "Файл не открыт";
+        return;
+    }
+    for (int i = 0; i < 10; i++) {
+        Train* temp = new Train(true);
+        file.write((char*)&temp, sizeof(Train));
+        cout << "Поезд направляется - " << temp->destination
+            << " в " << temp->departureDate
+            << " \n\tВремя отправления " << temp->departureTime.hour << ":" << temp->departureTime.minute
+            << "\n\tКолличество свободных мест - " << temp->freeSpace << endl;
+    }
+
+    file.close();
 }
 
 void readFile(char* name) {
-
+    fstream file;
+    Train* temp = new Train();
+    file.open(name, OPTION_READING);
+    if (!file.is_open()) {
+        cerr << "Файл не открыт";
+        return;
+    }
+    while (file.read((char*)&temp, sizeof(Train))) {
+        cout << "Поезд направляется - " << temp->destination
+            << " в " << temp->departureDate
+            << " \n\tВремя отправления " << temp->departureTime.hour << ":" << temp->departureTime.minute
+            << "\n\tКолличество свободных мест - " << temp->freeSpace << endl;
+    }
+    
+    file.close();
 }
 
 void addTrainToFile() {
