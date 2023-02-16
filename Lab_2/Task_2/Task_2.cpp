@@ -19,17 +19,17 @@
 #include <time.h>
 
 
-#define OPTION_CREATING  ios::out |ios::trunc | ios::binary
-#define OPTION_READING ios::binary
-#define OPTION_WRIATING ios::binary
+#define OPTION_READING "rb"
+#define OPTION_WRIATING "wb+"
+#define LENGHT_CHAR_ARRAY 10
 
 
 using namespace std;
 
 int GetRandomNumber(int min, int max);
 
- char daysOfWeek[7][10] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday" };
- char cities[5][10] = { "Misnk", "Mogilev", "Brest", "Vitebsk", "Grodno" };
+ char daysOfWeek[7][LENGHT_CHAR_ARRAY] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday" };
+ char cities[5][LENGHT_CHAR_ARRAY] = { "Misnk", "Mogilev", "Brest", "Vitebsk", "Grodno" };
 
 
 
@@ -47,12 +47,17 @@ struct Time {
 
 
 struct Train {
+    Train() {
+        this->departureTime = Time();
+        memcpy(this->departureDate, cities[GetRandomNumber(0, 6)], sizeof(this->departureDate));
+        memcpy(this->destination, cities[GetRandomNumber(0, 4)], sizeof(this->destination));
+        this->freeSpace = GetRandomNumber(0, 20);
+    }
     
-
-    Time *departureTime;
-    //char departureDate[10];
-    char destination[10]; 
-    int freeSpace;
+    Time departureTime;
+    char departureDate[LENGHT_CHAR_ARRAY];
+    char destination[LENGHT_CHAR_ARRAY];
+    int freeSpace{};
 };
 
 Train** getTrains();
@@ -63,22 +68,43 @@ void addTrainToFile();
 FILE *file;
 
 int main() {
-    char* fileName = new char[10];
+    
+}
+
+Train** getTrains()
+{
+    return nullptr;
+}
+
+void createFile(char* name){ 
+    
+}
+
+void readFile(char* name) {
+
+}
+
+void addTrainToFile() {
+
+}
+
+int GetRandomNumber(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+
+/*OLD
+char* fileName = new char[10];
     cin >> fileName;
 
 
 
-    if (fopen_s(&file, fileName, "wb+") == NULL) {
-        auto* temp = new Train;
-        temp->freeSpace = GetRandomNumber(0, 10);
-        temp->departureTime = new Time();
-        memcpy(temp->destination, cities[GetRandomNumber(0, 4)], sizeof(temp->destination));
+    if (fopen_s(&file, fileName, OPTION_WRIATING) == NULL) {
+        auto* temp = new Train();
+
         for (int i = 0; i < 10; i++)
         {
             fwrite(temp, sizeof(struct Train), 1, file);
-            temp->freeSpace = GetRandomNumber(0, 10);
-            temp->departureTime = new Time();
-            memcpy(temp->destination, cities[GetRandomNumber(0, 4)], sizeof(temp->destination));
+            temp = new Train;
         }
     }
     fclose(file);
@@ -92,69 +118,8 @@ int main() {
 
     auto* out = new Train;
     while (fread(out, sizeof(struct Train), 1, file)) {
-        cout << "Train -" << out->destination << " space -" << out->freeSpace << "\tTime" << out->departureTime->hour << endl;
+        cout << "Train -" << out->destination << " space -" << out->freeSpace << "\tTime" << out->departureTime.hour << endl;
     }
 
 
-}
-
-Train** getTrains()
-{
-    return nullptr;
-}
-
-void createFile(char* name){ 
-    /*
-    ofstream file;
-    file.open(name, OPTION_CREATING);
-    if (!file.is_open()) {
-        system("cls");
-        cerr << "Error, " << name << " file can't create\n";
-        return;
-    }
-    int count = 0;
-    cout << "Write count of trains:";
-    cin >> count;
-    for (int i = 0; i < count; i++) {
-        Train *temp = new Train();
-        file << temp;
-    }
-    cout << "File " << name << " was created\n";
-    file.close();
-    */
-}
-
-void readFile(char* name) {
-    /*
-    fstream file;
-    file.open("test", fstream::out | fstream::binary);
-    if (!file.is_open()) {
-        system("cls");
-        cerr << "Error, " << name << " file can't create\n";
-        return;
-    }
-    Train* temp = new Train();
-    file.write((char*)&temp, sizeof(Train));
-    file.close();
-
-    Train* out{};
-    file.open("test", fstream::in | fstream::binary);
-    file.read((char*)&out->freeSpace, sizeof(out->freeSpace));
-    int count = 0;
-   
-        count++;
-
-    
-    cout << "File " << name << " was created\n";
-    file.close();
-    cout << "Число поездов в файле - " << count << endl;
-    cout << "Free space - " << out->freeSpace << endl;
-    */
-}
-
-void addTrainToFile() {
-}
-
-int GetRandomNumber(int min, int max) {
-    return min + rand() % (max - min + 1);
-}
+*/
