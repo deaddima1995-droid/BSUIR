@@ -18,18 +18,18 @@
 #include <fstream>
 #include <time.h>
 
-
-#define OPTION_READING fstream::in | fstream::binary
-#define OPTION_WRIATING fstream::out | fstream::binary
 #define LENGHT_CHAR_ARRAY 10
-
 
 using namespace std;
 
 int GetRandomNumber(int min, int max);
+void createFile();
+void readFile();
+void addTrainToFile();
 
- char daysOfWeek[7][LENGHT_CHAR_ARRAY] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday" };
- char cities[5][LENGHT_CHAR_ARRAY] = { "Misnk", "Mogilev", "Brest", "Vitebsk", "Grodno" };
+
+char daysOfWeek[7][LENGHT_CHAR_ARRAY] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday" };
+char cities[5][LENGHT_CHAR_ARRAY] = { "Misnk", "Mogilev", "Brest", "Vitebsk", "Grodno" };
 
 
 
@@ -46,12 +46,16 @@ struct Time {
 };
 
 
+ostream& operator << (ostream& o, Time& t) {
+    o << t.hour << ":" << t.minute;
+    return o;
+}
+
 struct Train {
     Train() {
         departureTime.hour = 0;
         departureTime.minute = 0;
         freeSpace = 0;
-
     }
     Train(bool) {
         departureTime = Time();
@@ -65,58 +69,48 @@ struct Train {
     int freeSpace;
 };
 
-Train** getTrains();
-void createFile();
-void readFile();
-void addTrainToFile();
 
 int main() {
     setlocale(LC_ALL, "ru");
     srand(time(NULL));
     
-    struct  Train *train = new Train(true);
-
+    createFile();
+    readFile();
     
-    ofstream outTrain("test", ios::out | ios::binary);
+}
+
+void createFile(){ 
+    struct  Train train = Train(true);
+    int counter = 0;
+
+    fstream outTrain("test", std::fstream::out | std::fstream::binary);
     if (!outTrain) {
-        cout << "Нельзя открыть файл для записи\n";
-        return 1;
+        cerr << "Файл не создан\n";
+        return;
     }
-    for (int i = 0; i < 5; i++) {
-        train = new Train(true);
-        outTrain.write((char*)train, sizeof(struct Train));
-    }
-    
-    outTrain.close();
+    cout << "Введите колличество добавляемых поездов:";
+    cin >> counter;
 
-    ifstream inTrain("test", ios::in | ios::binary);
+    for (int i = 0; i < counter; i++) {
+        train = Train(true);
+        outTrain.write((char*)&train, sizeof(struct Train));
+    }
+    outTrain.close();
+}
+
+void readFile() {
+
+    fstream inTrain("test", std::fstream::in | std::fstream::binary);
     if (!inTrain) {
         cout << "Нельзя открыть файл для чтения\n";
     }
     Train* rTrain = new Train();
     while (inTrain.read((char*)rTrain, sizeof(struct Train))) {
-        cout << rTrain->destination << endl << rTrain->departureDate << endl << rTrain->departureTime.hour << ":" << rTrain->departureTime.minute << endl;
+        cout << rTrain->destination << endl << rTrain->departureDate << endl << rTrain->departureTime << endl;
         cout << endl;
     }
-    
+
     inTrain.close();
-
-   
-
-    
-}
-
-Train** getTrains()
-{
-    return nullptr;
-}
-
-void createFile(){ 
-    
-}
-
-void readFile() {
-    
 }
 
 void addTrainToFile() {
@@ -126,35 +120,3 @@ void addTrainToFile() {
 int GetRandomNumber(int min, int max) {
     return min + rand() % (max - min + 1);
 }
-
-/*OLD
-char* fileName = new char[10];
-    cin >> fileName;
-
-
-
-    if (fopen_s(&file, fileName, OPTION_WRIATING) == NULL) {
-        auto* temp = new Train();
-
-        for (int i = 0; i < 10; i++)
-        {
-            fwrite(temp, sizeof(struct Train), 1, file);
-            temp = new Train;
-        }
-    }
-    fclose(file);
-
-    fopen_s(&file, fileName, "rb");
-    if (file == nullptr) {
-        system("cls");
-        cout << "\033[31m" << "Ошибка открытия файла: " << "\033[32m" << fileName << "\033[0m" << endl;
-        return 0;
-    }
-
-    auto* out = new Train;
-    while (fread(out, sizeof(struct Train), 1, file)) {
-        cout << "Train -" << out->destination << " space -" << out->freeSpace << "\tTime" << out->departureTime.hour << endl;
-    }
-
-
-*/
