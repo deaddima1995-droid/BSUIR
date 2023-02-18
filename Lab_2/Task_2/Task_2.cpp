@@ -45,12 +45,6 @@ struct Time {
     int hour{}, minute{};
 };
 
-
-ostream& operator << (ostream& o, Time& t) {
-    o << t.hour << ":" << t.minute;
-    return o;
-}
-
 struct Train {
     Train() {
         departureTime.hour = 0;
@@ -68,6 +62,20 @@ struct Train {
     char destination[LENGHT_CHAR_ARRAY]{};
     int freeSpace;
 };
+
+
+ostream& operator << (ostream& out, Time& time) {
+    out << time.hour << ":" << time.minute;
+    return out;
+}
+
+ostream& operator << (ostream& out, Train *train) {
+    out << "Поезд направляется: " << train->destination << endl
+        << "Отправляется в " << train->departureDate << endl
+        << "Время отправления: " << train->departureTime << endl
+        << "Колличество свободных мест: " << train->freeSpace << endl;
+    return out;
+}
 
 
 int main() {
@@ -104,9 +112,10 @@ void readFile() {
     if (!inTrain) {
         cout << "Нельзя открыть файл для чтения\n";
     }
-    Train* rTrain = new Train();
+    Train *rTrain = new Train();
     while (inTrain.read((char*)rTrain, sizeof(struct Train))) {
-        cout << rTrain->destination << endl << rTrain->departureDate << endl << rTrain->departureTime << endl;
+        cout << rTrain;
+        //cout << rTrain->destination << endl << rTrain->departureDate << endl << rTrain->departureTime << endl;
         cout << endl;
     }
 
