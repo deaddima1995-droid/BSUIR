@@ -48,39 +48,62 @@ struct Time {
 
 struct Train {
     Train() {
-        this->departureTime = Time(0,0);
-        this->freeSpace = 0;
+        departureTime.hour = 0;
+        departureTime.minute = 0;
+        freeSpace = 0;
+
     }
     Train(bool) {
-        this->departureTime = Time();
-        memcpy(this->departureDate, cities[GetRandomNumber(0, 6)], sizeof(this->departureDate));
-        memcpy(this->destination, cities[GetRandomNumber(0, 4)], sizeof(this->destination));
-        this->freeSpace = GetRandomNumber(0, 20);
-    }
-    
+        departureTime = Time();
+        strcpy_s(departureDate, daysOfWeek[GetRandomNumber(0, 6)]);
+        strcpy_s(destination, cities[GetRandomNumber(0, 4)]);
+        freeSpace = GetRandomNumber(0, 20);
+        }
     Time departureTime;
     char departureDate[LENGHT_CHAR_ARRAY]{};
     char destination[LENGHT_CHAR_ARRAY]{};
-    int freeSpace{};
+    int freeSpace;
 };
 
 Train** getTrains();
-void createFile(char* name);
-void readFile(char* name);
+void createFile();
+void readFile();
 void addTrainToFile();
-
-FILE *file;
 
 int main() {
     setlocale(LC_ALL, "ru");
     srand(time(NULL));
-    char* name{};
-    cout << "Имя файла:";
-    cin >> name;
-    createFile(name);
-    cout << "\n";
-    readFile(name);
+    
+    struct  Train *train = new Train(true);
 
+    
+    ofstream outTrain("test", ios::out | ios::binary);
+    if (!outTrain) {
+        cout << "Нельзя открыть файл для записи\n";
+        return 1;
+    }
+    for (int i = 0; i < 5; i++) {
+        train = new Train(true);
+        outTrain.write((char*)train, sizeof(struct Train));
+    }
+    
+    outTrain.close();
+
+    ifstream inTrain("test", ios::in | ios::binary);
+    if (!inTrain) {
+        cout << "Нельзя открыть файл для чтения\n";
+    }
+    Train* rTrain = new Train();
+    while (inTrain.read((char*)rTrain, sizeof(struct Train))) {
+        cout << rTrain->destination << endl << rTrain->departureDate << endl << rTrain->departureTime.hour << ":" << rTrain->departureTime.minute << endl;
+        cout << endl;
+    }
+    
+    inTrain.close();
+
+   
+
+    
 }
 
 Train** getTrains()
@@ -88,42 +111,12 @@ Train** getTrains()
     return nullptr;
 }
 
-void createFile(char* name){ 
-    fstream file;
+void createFile(){ 
     
-    file.open(name, OPTION_WRIATING);
-    if (!file.is_open()) {
-        cerr << "Файл не открыт";
-        return;
-    }
-    for (int i = 0; i < 10; i++) {
-        Train* temp = new Train(true);
-        file.write((char*)&temp, sizeof(Train));
-        cout << "Поезд направляется - " << temp->destination
-            << " в " << temp->departureDate
-            << " \n\tВремя отправления " << temp->departureTime.hour << ":" << temp->departureTime.minute
-            << "\n\tКолличество свободных мест - " << temp->freeSpace << endl;
-    }
-
-    file.close();
 }
 
-void readFile(char* name) {
-    fstream file;
-    Train* temp = new Train();
-    file.open(name, OPTION_READING);
-    if (!file.is_open()) {
-        cerr << "Файл не открыт";
-        return;
-    }
-    while (file.read((char*)&temp, sizeof(Train))) {
-        cout << "Поезд направляется - " << temp->destination
-            << " в " << temp->departureDate
-            << " \n\tВремя отправления " << temp->departureTime.hour << ":" << temp->departureTime.minute
-            << "\n\tКолличество свободных мест - " << temp->freeSpace << endl;
-    }
+void readFile() {
     
-    file.close();
 }
 
 void addTrainToFile() {
