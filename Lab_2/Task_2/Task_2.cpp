@@ -14,6 +14,7 @@
         Необходимо зарезервировать m мест до города N на k-й день недели с временем отправления поезда не позднее t часов. 
         Вывести время отправления или сообщение о невозможности выполнить заказ. Ключ: число свободных мест.
 */
+
 #include <iostream>
 #include <fstream>
 #include <time.h>
@@ -80,13 +81,13 @@ ostream& operator << (ostream& out, Train *train) {
 
 
 int main() {
-    
+    system("chcp 1251");
     setlocale(LC_ALL, "ru");
     srand(time(NULL));
     char* name = new char;
     cin >> name;
-    createFile(name);
-    readFile(name);
+    //createFile(name);
+    //readFile(name);
     addTrainToFile(name);
     readFile(name);
     
@@ -127,19 +128,18 @@ void readFile(char* name) {
 }
 
 void addTrainToFile(char* name) {
-    fstream addTrain(name, std::fstream::out | std::fstream::app |std::fstream::binary);
+    fstream addTrain(name,  std::fstream::app | std::fstream::out |std::fstream::binary);
     if (!addTrain) {
         cout << "Нельзя открыть файл для чтения\n";
         return;
     }
     auto train = new Train();
-    char* temp = new char;
     cout << "Введите пункт назначения: ";
-    cin >> temp;
-    strcpy_s(train->destination, temp);
+    cin >> train->destination;
+    //strcpy_s(train->destination, temp);
     cout << "Введите день отправления:";
-    cin >> temp;
-    strcpy_s(train->departureDate, temp);
+    cin >> train->departureDate;
+    //strcpy_s(train->departureDate, temp);
     cout << "Введите время отправления";
     cin >> train->departureTime.hour;
     cin >> train->departureTime.minute;
