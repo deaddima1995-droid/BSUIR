@@ -32,9 +32,6 @@ int binarySearch(int[] arr, int key) {
     }
     return -(low + 1);  // key not found.
 }
-
-
-
 */
 
 #include <iostream>
@@ -50,6 +47,7 @@ using namespace std;
 
 char daysOfWeek[COUNT_DAYS][LENGHT_CHAR_ARRAY] = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" };
 char cities[COUNT_CITIES][LENGHT_CHAR_ARRAY] = { "Минск", "Могилёв", "Брест", "Витебск", "Гродно" };
+char* name = new char;
 
 
 struct Time {
@@ -76,13 +74,11 @@ struct Train {
         strcpy_s(this->destination, cities[destiny]);
         this->freeSpace = freeSpace;
     }
-
     Time departureTime;
     char departureDate[LENGHT_CHAR_ARRAY]{};
     char destination[LENGHT_CHAR_ARRAY]{};
     int freeSpace{};
 };
-
 
 ostream& operator << (ostream& out, Time& time) {
     out << time.hour << ":" << time.minute;
@@ -102,20 +98,65 @@ void readFile(char* name);
 void addTrainToFile(char* name);
 bool linearSerach(Train *tTemp, int key);
 int getRandomNumber(int min, int max);
+int menu();
 Train* getRandomTrain();
 
 
 int main() {
     system("chcp 1251");
-    setlocale(LC_ALL, "ru");
+    system("cls");
     srand(time(NULL));
-    char* name = new char;
-    cin >> name;
-    createFile(name);
-    readFile(name);
-    addTrainToFile(name);
-    readFile(name);
-    
+
+    while (true) {
+        system("cls");
+        cout << "Введите имя файла:";
+        char* name = new char;
+        cin >> name;
+
+        switch (menu()) {
+            
+        case 1: {        
+            createFile(name);
+            system("pause");
+            cin.get();
+            break;
+        }
+        case 2: {
+            readFile(name);
+            system("pause");
+            cin.get();
+            break;
+        }
+        case 3: {
+            addTrainToFile(name);
+            system("pause");
+            cin.get();
+            break;
+        }
+        case 0: {
+            return 0;
+        }
+        default:
+            cout << "Введите пункт меню:";
+            break;
+        }
+    }
+}
+
+int menu() {
+    cout << "\033[32m-----Меню-----\033[0m\n";
+    cout << "1. Создать файл\n";
+    cout << "2. Просмотр файла\n";
+    cout << "3. Добавить данные поезда в файл\n";
+    cout << "4. Линейный поиск в файле\n";
+    cout << "5. Двоичный поиск в файле\n";
+    cout << "6. Сортировка методом прямого выбора\n";
+    cout << "7. Сортировка Quick Sort\n";
+    cout << "0. Закрыть программу\n";
+    int out;
+    cin >> out;
+    system("cls");
+    return out;
 }
 
 void createFile(char* name){
@@ -138,12 +179,13 @@ void createFile(char* name){
 }
 
 void readFile(char* name) {
+    Train* rTrain = new Train();
+
     fstream inTrain(name, std::fstream::in | std::fstream::binary);
     if (!inTrain) {
         cerr << "Нельзя открыть файл для чтения\n";
         return;
     }
-    Train *rTrain = new Train();
     while (inTrain.read((char*)rTrain, sizeof(struct Train))) {
         cout << rTrain;
         cout << endl;
@@ -153,12 +195,13 @@ void readFile(char* name) {
 }
 
 void addTrainToFile(char* name) {
+    auto train = new Train();
+
     fstream addTrain(name,  std::fstream::app | std::fstream::out |std::fstream::binary);
     if (!addTrain) {
         cout << "Нельзя открыть файл для чтения\n";
         return;
     }
-    auto train = new Train();
     cout << "Введите пункт назначения: ";
     cin >> train->destination;
     cout << "Введите день отправления:";
