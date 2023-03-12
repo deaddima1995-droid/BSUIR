@@ -15,6 +15,9 @@
         Вывести время отправления или сообщение о невозможности выполнить заказ. Ключ: число свободных мест.
 
         Двоичный поиск
+
+        Ключ в поиске - время до поезда,
+        а сортировать можно по колличеству свободных мест
 int binarySearch(int[] arr, int key) {
     int low = 0;
     int high = arr.length - 1;
@@ -104,7 +107,6 @@ Train* getRandomTrain();
 
 int main() {
     system("chcp 1251");
-    system("cls");
     srand(time(NULL));
 
     while (true) {
