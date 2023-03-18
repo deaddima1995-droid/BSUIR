@@ -103,6 +103,7 @@ bool linearSerach(Train *tTemp, int key);
 int getRandomNumber(int min, int max);
 int menu();
 Train* getRandomTrain();
+Train** getTrains(char* fileName, int* counter);
 
 
 int main() {
@@ -135,6 +136,16 @@ int main() {
             cin.get();
             break;
         }
+        case 4: {
+            int* counter = new int;
+            Train** trains = getTrains(name, counter);
+            cout << "Поезда в этом файле";
+            int count = *counter;
+            for (int i = 0; i < count; i++) {
+                cout << trains[i];
+            }
+            break;
+        }
         case 0: {
             return 0;
         }
@@ -150,8 +161,8 @@ int menu() {
     cout << "1. Создать файл\n";
     cout << "2. Просмотр файла\n";
     cout << "3. Добавить данные поезда в файл\n";
-    cout << "4. Линейный поиск в файле\n";
-    cout << "5. Двоичный поиск в файле\n";
+    cout << "4. Заказать билет Линейнейным поиском в файле\n";
+    cout << "5. Заказать билет Двоичным поиск в файле\n";
     cout << "6. Сортировка методом прямого выбора\n";
     cout << "7. Сортировка Quick Sort\n";
     cout << "0. Закрыть программу\n";
@@ -233,7 +244,31 @@ int getRandomNumber(int min, int max) {
 Train* getRandomTrain() {
     return new Train(getRandomNumber(0, 23),
                      getRandomNumber(0, 59),
-                     getRandomNumber(0,COUNT_DAYS - 1),
+                     getRandomNumber(0, COUNT_DAYS - 1),
                      getRandomNumber(0, COUNT_CITIES - 1),
                      getRandomNumber(0, COUNT_FREE_SPACE));
+}
+
+Train** getTrains(char* fileName, int* counter) {
+    int count = 0;
+
+    Train* rTrain = new Train();
+    fstream inTrain(fileName, std::fstream::in | std::fstream::binary);
+    if (!inTrain) {
+        cerr << "Нельзя открыть файл для чтения\n";
+        return nullptr;
+    }
+    while (inTrain.read((char*)rTrain, sizeof(struct Train))) {
+        count++;
+    }
+    delete rTrain;
+    inTrain.clear();
+    inTrain.seekg(0);
+    counter = &count;
+    Train** outTrains = new Train*[count];
+    for (int i = 0; i < count; i++) {
+        inTrain.read((char*)outTrains[i], sizeof(struct Train));
+    }
+    inTrain.close();
+    return outTrains;
 }
