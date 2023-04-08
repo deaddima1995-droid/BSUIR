@@ -39,16 +39,16 @@ int binarySearch(int[] arr, int key) {
 
 #include <iostream>
 #include <fstream>
-#include <time.h>
+#include <ctime>
 
-#define LENGHT_CHAR_ARRAY 12
+#define LENGHT_CHAR_ARRAY 23
 #define COUNT_DAYS 7
 #define COUNT_CITIES 5
 #define COUNT_FREE_SPACE 20
 
 using namespace std;
 
-char daysOfWeek[COUNT_DAYS][LENGHT_CHAR_ARRAY] = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" };
+const char daysOfWeek[][LENGHT_CHAR_ARRAY] = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" };
 char cities[COUNT_CITIES][LENGHT_CHAR_ARRAY] = { "Минск", "Могилёв", "Брест", "Витебск", "Гродно" };
 char* name = new char;
 
@@ -108,7 +108,7 @@ Train** getTrains(char* fileName, int* counter);
 
 int main() {
     system("chcp 1251");
-    srand(time(NULL));
+    srand(time(nullptr));
 
     while (true) {
         system("cls");
@@ -118,32 +118,48 @@ int main() {
 
         switch (menu()) {
             
-        case 1: {        
+        case 1: {
+                // Создать файл
             createFile(name);
             system("pause");
             cin.get();
             break;
         }
         case 2: {
+                // Прочитать файл
             readFile(name);
             system("pause");
             cin.get();
             break;
         }
         case 3: {
+                // Добавить в файл данные поезда
             addTrainToFile(name);
             system("pause");
             cin.get();
             break;
         }
         case 4: {
+                // Сделать заказ линейным поиском
             int* counter = new int;
             Train** trains = getTrains(name, counter);
-            cout << "Поезда в этом файле";
-            int count = *counter;
-            for (int i = 0; i < count; i++) {
+            if (counter == 0){
+                cout << "В файле нет данных по поездам.\n";
+                break;
+            }
+
+            cout << "Поезда в этом файле\n";
+            for (int i = 0; i < *counter; i++) {
                 cout << trains[i];
             }
+
+            int dayTrain, destination, time, freePlace;
+
+
+
+
+            system("pause");
+            cin.get();
             break;
         }
         case 0: {
@@ -162,7 +178,7 @@ int menu() {
     cout << "2. Просмотр файла\n";
     cout << "3. Добавить данные поезда в файл\n";
     cout << "4. Заказать билет Линейнейным поиском в файле\n";
-    cout << "5. Заказать билет Двоичным поиск в файле\n";
+    cout << "5. Заказать билет Двоичным поиском в файле\n";
     cout << "6. Сортировка методом прямого выбора\n";
     cout << "7. Сортировка Quick Sort\n";
     cout << "0. Закрыть программу\n";
@@ -251,7 +267,6 @@ Train* getRandomTrain() {
 
 Train** getTrains(char* fileName, int* counter) {
     int count = 0;
-
     Train* rTrain = new Train();
     fstream inTrain(fileName, std::fstream::in | std::fstream::binary);
     if (!inTrain) {
@@ -264,9 +279,10 @@ Train** getTrains(char* fileName, int* counter) {
     delete rTrain;
     inTrain.clear();
     inTrain.seekg(0);
-    counter = &count;
-    Train** outTrains = new Train*[count];
+    *counter = count;
+    auto outTrains = new Train*[count];
     for (int i = 0; i < count; i++) {
+        outTrains[i] = new Train;
         inTrain.read((char*)outTrains[i], sizeof(struct Train));
     }
     inTrain.close();
