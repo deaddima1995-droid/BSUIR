@@ -14,7 +14,9 @@ using namespace std;
 int degree(int x, int n);
 
 int main() {
-    cout << "Answer: " << degree(2,10);
+    cout << "Answer: " << degree(2,10) << endl;
+    system("pause");
+    cin.get();
 }
 
 int degree(int x, int n) {

@@ -114,7 +114,7 @@ Train **getTrains(char *fileName, int *counter);
 
 
 int main() {
-    system("chcp 1251");
+    system("chcp 65001");
     srand(time(nullptr));
 
     while (true) {
@@ -207,6 +207,7 @@ int main() {
 }
 
 int menu() {
+    cout << "Текущий файл: " << name << endl;
     cout << "\033[32m-----Меню-----\033[0m\n";
     cout << "1. Создать файл\n";
     cout << "2. Просмотр файла\n";
@@ -233,7 +234,6 @@ void createFile(char *fileName) {
     } else {
         cout << "Файл " << fileName << " создан\n";
     }
-
     cout << "Введите количество добавляемых поездов:";
     cin >> counter;
 
@@ -241,7 +241,6 @@ void createFile(char *fileName) {
         train = getRandomTrain();
         outTrain.write((char *) train, sizeof(struct Train));
     }
-
     outTrain.close();
 }
 
