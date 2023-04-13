@@ -186,11 +186,12 @@ int main() {
                         hour <= trains[i]->departureTime.hour &&
                         strcmp(destination, trains[i]->destination) == 0 &&
                         strcmp(dayArr, daysOfWeek[day]) == 0) {
+
                         trains[i]->freeSpace -= seats;
                         cout << "Заказ делан.\n";
+                        addTrainTo(name, trains[i]);
                         break;
                     }
-                    addTrainTo(name, trains[i]);
                 }
                 system("pause");
                 cin.get();
@@ -348,9 +349,10 @@ Train **getTrains(char *fileName, int *counter) {
     delete rTrain;
     inTrain.clear();
     inTrain.seekg(0);
-    counter = &count;
+    *counter = count;
     auto **outTrains = new Train *[count];
     for (int i = 0; i < count; i++) {
+        outTrains[i] = new Train;
         inTrain.read((char *) outTrains[i], sizeof(struct Train));
     }
     inTrain.close();
