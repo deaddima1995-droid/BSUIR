@@ -24,6 +24,7 @@
 #include <fstream>
 #include <ctime>
 #include <cstring>
+#include "windows.h"
 
 #define LENGTH_CHAR_ARRAY 23
 #define COUNT_DAYS 7
@@ -44,9 +45,9 @@ struct Time {
         this->minute = 0;
     }
 
-    Time(int hour, int minute) {
+    Time(int hour) {
         this->hour = hour;
-        this->minute = minute;
+        this->minute = 0;
     }
 
     int hour, minute;
@@ -58,9 +59,9 @@ struct Train {
         this->freeSpace = 0;
     }
 
-    Train(int hour, int minute, int date, int destiny, int freeSpace) {
+    Train(int hour, int date, int destiny, int freeSpace) {
         this->departureTime.hour = hour;
-        this->departureTime.minute = minute;
+        this->departureTime.minute = 0;
         strcpy_s(this->departureDate, daysOfWeek[date]);
         strcpy_s(this->destination, cities[destiny]);
         this->freeSpace = freeSpace;
@@ -78,11 +79,7 @@ ostream &operator<<(ostream &out, Time &time) {
     } else {
         out << time.hour;
     }
-    if (time.minute < 10) {
-        out << ":" << 0 << time.minute;
-    } else {
-        out << ":" << time.minute;
-    }
+    out << ":" << 0 << time.minute;
     return out;
 }
 
@@ -109,8 +106,9 @@ int getRandomNumber(int min, int max);
 int menu();
 
 Train *getRandomTrain();
+Train *getTrain();
 
-Train **getTrains(char *fileName, int *counter);
+Train **getTrainsFromFile(char *fileName, int *counter);
 
 
 int main() {
@@ -147,7 +145,7 @@ int main() {
                 int hour, seats, day;
                 char destination[LENGTH_CHAR_ARRAY], dayArr[LENGTH_CHAR_ARRAY];
 
-                Train **trains = getTrains(name, counter);
+                Train **trains = getTrainsFromFile(name, counter);
                 if (trains == nullptr) {
                     cout << "В файле отсутствуют поезда\n";
                     system("pause");
@@ -229,7 +227,7 @@ void createFile(char *fileName) {
     int counter = 0;
 
     fstream outTrain(fileName, std::fstream::out | std::fstream::binary);
-    if (!outTrain) {
+    if (!outTrain.is_open()) {
         cerr << "Файл не создан\n";
         return;
     } else {
@@ -249,7 +247,7 @@ void readFile(char *fileName) {
     Train rTrain;
 
     fstream inTrain(fileName, std::fstream::in | std::fstream::binary);
-    if (!inTrain) {
+    if (!inTrain.is_open()) {
         cerr << "Нельзя открыть файл для чтения\n";
         return;
     }
@@ -261,26 +259,15 @@ void readFile(char *fileName) {
 }
 
 void addTrainToFile(char *fileName) {
-    Train train;
-
+    Train *train = getTrain();
     fstream addTrain(fileName, std::fstream::app | std::fstream::out | std::fstream::binary);
     if (!addTrain) {
         cout << "Нельзя открыть файл для чтения\n";
         return;
     }
-    cout << "Введите пункт назначения: ";
-    cin >> train.destination;
-    cout << "Введите день отправления:";
-    cin >> train.departureDate;
-    cout << "Введите время отправления";
-    cin >> train.departureTime.hour;
-    cin >> train.departureTime.minute;
-    cout << "Введите количество свободных мест";
-    cin >> train.freeSpace;
-
-    addTrain.write((char *) &train, sizeof(struct Train));
+    addTrain.write((char *) train, sizeof(struct Train));
     addTrain.close();
-    cout << "Добавлен поезд" << &train << endl << endl;
+    cout << "Добавлен поезд" << train << endl << endl;
 }
 
 int linearSearch(Train **trains, int n, int key) {
@@ -326,32 +313,55 @@ int getRandomNumber(int min, int max) {
     return min + rand() % (max - min + 1);
 }
 
+Train *getTrain() {
+    auto *out = new Train();
+    int day{};
+    char *destiny = new char ;
+    cout << "\nВведите пункт назначения: ";
+    cin >> destiny;
+    strcpy_s(out->destination, destiny);
+    do {
+        cout << "\nВведите день недели отправления: ";
+        cin >> day;
+        day++;
+        strcpy_s(out->departureDate, daysOfWeek[day]);
+    } while (day < 1 || day > 7 );
+
+    do {
+        cout << "\nВведите время отправления: ";
+        cout << "\nЧас - ";
+        cin >> out->departureTime.hour;
+        out->departureTime.minute = 0;
+
+    } while(out->departureTime.hour < 0 || out->departureTime.hour > 23);
+
+    do {
+        cout << "\nВведите количество свободных мест";
+        cin >> out->freeSpace;
+    } while (out->freeSpace < 1);
+
+    return out;
+}
+
 Train *getRandomTrain() {
     return new Train(getRandomNumber(0, 23),
-                     getRandomNumber(0, 59),
                      getRandomNumber(0, COUNT_DAYS - 1),
                      getRandomNumber(0, COUNT_CITIES - 1),
                      getRandomNumber(0, COUNT_FREE_SPACE));
 }
 
-Train **getTrains(char *fileName, int *counter) {
-    int count = 0;
+Train **getTrainsFromFile(char *fileName, int *counter) {
 
-    auto *rTrain = new Train();
     fstream inTrain(fileName, std::fstream::in | std::fstream::binary);
-    if (!inTrain) {
+    if (!inTrain.is_open()) {
         cerr << "Нельзя открыть файл для чтения\n";
         return nullptr;
     }
-    while (inTrain.read((char *) rTrain, sizeof(struct Train))) {
-        count++;
-    }
-    delete rTrain;
     inTrain.clear();
-    inTrain.seekg(0);
-    *counter = count;
-    auto **outTrains = new Train *[count];
-    for (int i = 0; i < count; i++) {
+    inTrain.seekg(0, ios::end);
+    *counter = (int) inTrain.tellg();
+    auto **outTrains = new Train *[*counter];
+    for (int i = 0; i < *counter; i++) {
         outTrains[i] = new Train;
         inTrain.read((char *) outTrains[i], sizeof(struct Train));
     }
@@ -361,12 +371,12 @@ Train **getTrains(char *fileName, int *counter) {
 
 void addTrainTo(char *fileName, Train *train) {
     fstream addTrain(fileName, std::fstream::app | std::fstream::out | std::fstream::binary);
-    if (!addTrain) {
+    if (!addTrain.is_open()) {
         cout << "Нельзя открыть файл для чтения\n";
         return;
     }
     addTrain.write((char *) train, sizeof(struct Train));
     addTrain.close();
     cout << "Добавлен поезд" << train << endl << endl;
-    delete train;
 }
+
