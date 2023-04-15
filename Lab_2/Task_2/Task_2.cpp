@@ -132,56 +132,13 @@ int main() {
                 break;
             }
             case 4: {
-                int *counter = new int;
-                int hour, seats, day;
-                char destination[LENGTH_CHAR_ARRAY], dayArr[LENGTH_CHAR_ARRAY];
 
-                Train **trains = getTrainsFromFile(name, counter);
-                if (trains == nullptr) {
-                    cout << "В файле отсутствуют поезда\n";
-                    system("pause");
-                    cin.get();
+                fstream file(name, std::fstream::in | std::fstream::binary);
+                if (!file.is_open()) {
+                    cerr << "Нельзя открыть файл для чтения\n";
                     break;
                 }
-
-                cout << "Список поездов в файле:\n";
-                for (int i = 0; i < *counter; i++) {
-                    cout << trains[i];
-                }
-
-                cout << "\nВведите пункт назначения:";
-                cin >> destination;
-
-                do {
-                    cout << "\nВведите час отправления:";
-                    cin >> hour;
-                } while (hour < 0 || hour > 23);
-
-                do {
-                    cout << "\nВведите номер дня недели:";
-                    cin >> day;
-                } while (day < 1 || day > 7);
-                --day;
-                strcpy_s(dayArr, daysOfWeek[day]);
-
-                do {
-                    cout << "\nВведите количество необходимых мест";
-                    cin >> seats;
-                } while (seats < 0);
-
-                createFile(name);
-                for (int i = 0; i < *counter; ++i) {
-                    if (seats <= trains[i]->freeSpace &&
-                        hour <= trains[i]->departureTime.hour &&
-                        strcmp(destination, trains[i]->destination) == 0 &&
-                        strcmp(dayArr, daysOfWeek[day]) == 0) {
-
-                        trains[i]->freeSpace -= seats;
-                        cout << "Заказ делан.\n";
-                        addTrainToFile(name, trains[i]);
-                        break;
-                    }
-                }
+                file.close();
                 system("pause");
                 cin.get();
                 break;
@@ -315,7 +272,7 @@ Train *getTrain() {
     } while(out->departureTime.hour < 0 || out->departureTime.hour > 23);
 
     do {
-        cout << "\nВведите количество свободных мест";
+        cout << "\nВведите количество свободных мест: ";
         cin >> out->freeSpace;
     } while (out->freeSpace < 1);
 
@@ -356,6 +313,6 @@ void addTrainToFile(char *fileName, Train *train) {
     }
     addTrain.write((char *) train, sizeof(struct Train));
     addTrain.close();
-    cout << "Добавлен поезд" << train << endl << endl;
+    cout << "Добавлен поезд:\n" << train << endl << endl;
 }
 
