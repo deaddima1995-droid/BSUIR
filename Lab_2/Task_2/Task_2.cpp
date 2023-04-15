@@ -1,30 +1,29 @@
-п»ї/*
-* 2.2. РРЅРґРёРІРёРґСѓР°Р»СЊРЅС‹Рµ Р·Р°РґР°РЅРёСЏ.
-РќР°РїРёСЃР°С‚СЊ РїСЂРѕРіСЂР°РјРјСѓ РѕР±СЂР°Р±РѕС‚РєРё С„Р°Р№Р»Р° РґР°РЅРЅС‹С…, СЃРѕСЃС‚РѕСЏС‰РёС… РёР· СЃС‚СЂСѓРєС‚СѓСЂ, РІ РєРѕС‚РѕСЂРѕР№ СЂРµР°Р»РёР·РѕРІР°РЅС‹ СЃР»РµРґСѓСЋС‰РёРµ С„СѓРЅРєС†РёРё:
-    СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РѕР±СЂР°Р±РѕС‚РєР° С„Р°Р№Р»Р° (СЃРѕР·РґР°РЅРёРµ, РїСЂРѕСЃРјРѕС‚СЂ, РґРѕР±Р°РІР»РµРЅРёРµ);
-    Р»РёРЅРµР№РЅС‹Р№ РїРѕРёСЃРє РІ С„Р°Р№Р»Рµ;
-    СЃРѕСЂС‚РёСЂРѕРІРєР° РјР°СЃСЃРёРІР° (С„Р°Р№Р»Р°) РјРµС‚РѕРґР°РјРё РїСЂСЏРјРѕРіРѕ РІС‹Р±РѕСЂР° Рё QuickSort;
-    РґРІРѕРёС‡РЅС‹Р№ РїРѕРёСЃРє РІ РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅРѕРј РјР°СЃСЃРёРІРµ.
+/*
+* 2.2. Индивидуальные задания.
+Написать программу обработки файла данных, состоящих из структур, в которой реализованы следующие функции:
+    стандартная обработка файла (создание, просмотр, добавление);
+    линейный поиск в файле;
+    сортировка массива (файла) методами прямого выбора и QuickSort;
+    двоичный поиск в отсортированном массиве.
 *
-        13. Р’ РєР°СЃСЃРµ С…СЂР°РЅРёС‚СЃСЏ РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РїРѕРµР·РґР°С… РЅР° Р±Р»РёР¶Р°Р№С€СѓСЋ РЅРµРґРµР»СЋ:
-        - РґР°С‚Р° РІС‹РµР·РґР°, +
-        - РїСѓРЅРєС‚ РЅР°Р·РЅР°С‡РµРЅРёСЏ, +
-        - РІСЂРµРјСЏ РѕС‚РїСЂР°РІР»РµРЅРёСЏ, +
-        - С‡РёСЃР»Рѕ СЃРІРѕР±РѕРґРЅС‹С… РјРµСЃС‚.
-        РќРµРѕР±С…РѕРґРёРјРѕ Р·Р°СЂРµР·РµСЂРІРёСЂРѕРІР°С‚СЊ m РјРµСЃС‚ РґРѕ РіРѕСЂРѕРґР° N РЅР° k-Р№ РґРµРЅСЊ РЅРµРґРµР»Рё СЃ РІСЂРµРјРµРЅРµРј РѕС‚РїСЂР°РІР»РµРЅРёСЏ РїРѕРµР·РґР° РЅРµ РїРѕР·РґРЅРµРµ t С‡Р°СЃРѕРІ.
-        Р’С‹РІРµСЃС‚Рё РІСЂРµРјСЏ РѕС‚РїСЂР°РІР»РµРЅРёСЏ РёР»Рё СЃРѕРѕР±С‰РµРЅРёРµ Рѕ РЅРµРІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РІС‹РїРѕР»РЅРёС‚СЊ Р·Р°РєР°Р·. РљР»СЋС‡: С‡РёСЃР»Рѕ СЃРІРѕР±РѕРґРЅС‹С… РјРµСЃС‚.
+        13. В кассе хранится информация о поездах на ближайшую неделю:
+        - дата выезда, +
+        - пункт назначения, +
+        - время отправления, +
+        - число свободных мест.
+        Необходимо зарезервировать m мест до города N на k-й день недели с временем отправления поезда не позднее t часов.
+        Вывести время отправления или сообщение о невозможности выполнить заказ. Ключ: число свободных мест.
 
-        Р”РІРѕРёС‡РЅС‹Р№ РїРѕРёСЃРє
+        Двоичный поиск
 
-        РљР»СЋС‡ РІ РїРѕРёСЃРєРµ - РІСЂРµРјСЏ РґРѕ РїРѕРµР·РґР°,
-        Р° СЃРѕСЂС‚РёСЂРѕРІР°С‚СЊ РјРѕР¶РЅРѕ РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ СЃРІРѕР±РѕРґРЅС‹С… РјРµСЃС‚
+        Ключ в поиске - время до поезда,
+        а сортировать можно по количеству свободных мест
 */
 
 #include <iostream>
 #include <fstream>
 #include <ctime>
 #include <cstring>
-#include "windows.h"
 
 #define LENGTH_CHAR_ARRAY 23
 #define COUNT_DAYS 7
@@ -33,9 +32,9 @@
 
 using namespace std;
 
-const char daysOfWeek[COUNT_DAYS][LENGTH_CHAR_ARRAY] = {"РџРѕРЅРµРґРµР»СЊРЅРёРє", "Р’С‚РѕСЂРЅРёРє", "РЎСЂРµРґР°", "Р§РµС‚РІРµСЂРі", "РџСЏС‚РЅРёС†Р°",
-                                                        "РЎСѓР±Р±РѕС‚Р°", "Р’РѕСЃРєСЂРµСЃРµРЅСЊРµ"};
-const char cities[COUNT_CITIES][LENGTH_CHAR_ARRAY] = {"РњРёРЅСЃРє", "РњРѕРіРёР»С‘РІ", "Р‘СЂРµСЃС‚", "Р’РёС‚РµР±СЃРє", "Р“СЂРѕРґРЅРѕ"};
+const char daysOfWeek[COUNT_DAYS][LENGTH_CHAR_ARRAY] = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница",
+                                                        "Суббота", "Воскресенье"};
+const char cities[COUNT_CITIES][LENGTH_CHAR_ARRAY] = {"Минск", "Могилёв", "Брест", "Витебск", "Гродно"};
 char *name = new char;
 
 
@@ -44,12 +43,6 @@ struct Time {
         this->hour = 0;
         this->minute = 0;
     }
-
-    Time(int hour) {
-        this->hour = hour;
-        this->minute = 0;
-    }
-
     int hour, minute;
 };
 
@@ -84,10 +77,10 @@ ostream &operator<<(ostream &out, Time &time) {
 }
 
 ostream &operator<<(ostream &out, Train *train) {
-    out << "РџРѕРµР·Рґ РЅР°РїСЂР°РІР»СЏРµС‚СЃСЏ: " << train->destination << endl
-        << "Р”РµРЅСЊ РѕС‚РїСЂР°РІР»РµРЅРёСЏ: " << train->departureDate << endl
-        << "Р’СЂРµРјСЏ РѕС‚РїСЂР°РІР»РµРЅРёСЏ: " << train->departureTime << endl
-        << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРІРѕР±РѕРґРЅС‹С… РјРµСЃС‚: " << train->freeSpace << endl;
+    out << "Поезд направляется: " << train->destination << endl
+        << "День отправления: " << train->departureDate << endl
+        << "Время отправления: " << train->departureTime << endl
+        << "Количество свободных мест: " << train->freeSpace << endl;
     return out;
 }
 
@@ -95,9 +88,7 @@ void createFile(char *fileName);
 
 void readFile(char *fileName);
 
-void addTrainToFile(char *fileName);
-
-void addTrainTo(char *fileName, Train *train);
+void addTrainToFile(char *fileName, Train *train);
 
 int linearSearch(Train **trains, int n, int key);
 
@@ -112,12 +103,12 @@ Train **getTrainsFromFile(char *fileName, int *counter);
 
 
 int main() {
-    system("chcp 65001");
+    system("chcp 1251");
     srand(time(nullptr));
 
     while (true) {
         system("cls");
-        cout << "Р’РІРµРґРёС‚Рµ РёРјСЏ С„Р°Р№Р»Р°:";
+        cout << "Введите имя файла:";
         cin >> name;
 
         switch (menu()) {
@@ -135,7 +126,7 @@ int main() {
                 break;
             }
             case 3: {
-                addTrainToFile(name);
+                addTrainToFile(name,getTrain());
                 system("pause");
                 cin.get();
                 break;
@@ -147,34 +138,34 @@ int main() {
 
                 Train **trains = getTrainsFromFile(name, counter);
                 if (trains == nullptr) {
-                    cout << "Р’ С„Р°Р№Р»Рµ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚ РїРѕРµР·РґР°\n";
+                    cout << "В файле отсутствуют поезда\n";
                     system("pause");
                     cin.get();
                     break;
                 }
 
-                cout << "РЎРїРёСЃРѕРє РїРѕРµР·РґРѕРІ РІ С„Р°Р№Р»Рµ:\n";
+                cout << "Список поездов в файле:\n";
                 for (int i = 0; i < *counter; i++) {
                     cout << trains[i];
                 }
 
-                cout << "\nР’РІРµРґРёС‚Рµ РїСѓРЅРєС‚ РЅР°Р·РЅР°С‡РµРЅРёСЏ:";
+                cout << "\nВведите пункт назначения:";
                 cin >> destination;
 
                 do {
-                    cout << "\nР’РІРµРґРёС‚Рµ С‡Р°СЃ РѕС‚РїСЂР°РІР»РµРЅРёСЏ:";
+                    cout << "\nВведите час отправления:";
                     cin >> hour;
                 } while (hour < 0 || hour > 23);
 
                 do {
-                    cout << "\nР’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РґРЅСЏ РЅРµРґРµР»Рё:";
+                    cout << "\nВведите номер дня недели:";
                     cin >> day;
                 } while (day < 1 || day > 7);
                 --day;
                 strcpy_s(dayArr, daysOfWeek[day]);
 
                 do {
-                    cout << "\nР’РІРµРґРёС‚Рµ РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРѕР±С…РѕРґРёРјС‹С… РјРµСЃС‚";
+                    cout << "\nВведите количество необходимых мест";
                     cin >> seats;
                 } while (seats < 0);
 
@@ -186,8 +177,8 @@ int main() {
                         strcmp(dayArr, daysOfWeek[day]) == 0) {
 
                         trains[i]->freeSpace -= seats;
-                        cout << "Р—Р°РєР°Р· РґРµР»Р°РЅ.\n";
-                        addTrainTo(name, trains[i]);
+                        cout << "Заказ делан.\n";
+                        addTrainToFile(name, trains[i]);
                         break;
                     }
                 }
@@ -199,23 +190,23 @@ int main() {
                 return 0;
             }
             default:
-                cout << "Р’РІРµРґРёС‚Рµ РїСѓРЅРєС‚ РјРµРЅСЋ:";
+                cout << "Введите пункт меню:";
                 break;
         }
     }
 }
 
 int menu() {
-    cout << "РўРµРєСѓС‰РёР№ С„Р°Р№Р»: " << name << endl;
-    cout << "\033[32m-----РњРµРЅСЋ-----\033[0m\n";
-    cout << "1. РЎРѕР·РґР°С‚СЊ С„Р°Р№Р»\n";
-    cout << "2. РџСЂРѕСЃРјРѕС‚СЂ С„Р°Р№Р»Р°\n";
-    cout << "3. Р”РѕР±Р°РІРёС‚СЊ РґР°РЅРЅС‹Рµ РїРѕРµР·РґР° РІ С„Р°Р№Р»\n";
-    cout << "4. Р—Р°РєР°Р·Р°С‚СЊ Р±РёР»РµС‚ Р›РёРЅРµР№РЅС‹Рј РїРѕРёСЃРєРѕРј РІ С„Р°Р№Р»Рµ\n";
-    cout << "5. Р—Р°РєР°Р·Р°С‚СЊ Р±РёР»РµС‚ Р”РІРѕРёС‡РЅС‹Рј РїРѕРёСЃРє РІ С„Р°Р№Р»Рµ\n";
-    cout << "6. РЎРѕСЂС‚РёСЂРѕРІРєР° РјРµС‚РѕРґРѕРј РїСЂСЏРјРѕРіРѕ РІС‹Р±РѕСЂР°\n";
-    cout << "7. РЎРѕСЂС‚РёСЂРѕРІРєР° Quick Sort\n";
-    cout << "0. Р—Р°РєСЂС‹С‚СЊ РїСЂРѕРіСЂР°РјРјСѓ\n";
+    cout << "Текущий файл: " << name << endl;
+    cout << "\033[32m-----Меню-----\033[0m\n";
+    cout << "1. Создать файл\n";
+    cout << "2. Просмотр файла\n";
+    cout << "3. Добавить данные поезда в файл\n";
+    cout << "4. Заказать билет Линейным поиском в файле\n";
+    cout << "5. Заказать билет Двоичным поиск в файле\n";
+    cout << "6. Сортировка методом прямого выбора\n";
+    cout << "7. Сортировка Quick Sort\n";
+    cout << "0. Закрыть программу\n";
     int out;
     cin >> out;
     system("cls");
@@ -228,12 +219,12 @@ void createFile(char *fileName) {
 
     fstream outTrain(fileName, std::fstream::out | std::fstream::binary);
     if (!outTrain.is_open()) {
-        cerr << "Р¤Р°Р№Р» РЅРµ СЃРѕР·РґР°РЅ\n";
+        cerr << "Файл не создан\n";
         return;
     } else {
-        cout << "Р¤Р°Р№Р» " << fileName << " СЃРѕР·РґР°РЅ\n";
+        cout << "Файл " << fileName << " создан\n";
     }
-    cout << "Р’РІРµРґРёС‚Рµ РєРѕР»РёС‡РµСЃС‚РІРѕ РґРѕР±Р°РІР»СЏРµРјС‹С… РїРѕРµР·РґРѕРІ:";
+    cout << "Введите количество добавляемых поездов:";
     cin >> counter;
 
     for (int i = 0; i < counter; i++) {
@@ -248,7 +239,7 @@ void readFile(char *fileName) {
 
     fstream inTrain(fileName, std::fstream::in | std::fstream::binary);
     if (!inTrain.is_open()) {
-        cerr << "РќРµР»СЊР·СЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» РґР»СЏ С‡С‚РµРЅРёСЏ\n";
+        cerr << "Нельзя открыть файл для чтения\n";
         return;
     }
     while (inTrain.read((char *) &rTrain, sizeof(struct Train))) {
@@ -256,18 +247,6 @@ void readFile(char *fileName) {
         cout << endl;
     }
     inTrain.close();
-}
-
-void addTrainToFile(char *fileName) {
-    Train *train = getTrain();
-    fstream addTrain(fileName, std::fstream::app | std::fstream::out | std::fstream::binary);
-    if (!addTrain) {
-        cout << "РќРµР»СЊР·СЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» РґР»СЏ С‡С‚РµРЅРёСЏ\n";
-        return;
-    }
-    addTrain.write((char *) train, sizeof(struct Train));
-    addTrain.close();
-    cout << "Р”РѕР±Р°РІР»РµРЅ РїРѕРµР·Рґ" << train << endl << endl;
 }
 
 int linearSearch(Train **trains, int n, int key) {
@@ -317,26 +296,26 @@ Train *getTrain() {
     auto *out = new Train();
     int day{};
     char *destiny = new char ;
-    cout << "\nР’РІРµРґРёС‚Рµ РїСѓРЅРєС‚ РЅР°Р·РЅР°С‡РµРЅРёСЏ: ";
+    cout << "\nВведите пункт назначения: ";
     cin >> destiny;
     strcpy_s(out->destination, destiny);
     do {
-        cout << "\nР’РІРµРґРёС‚Рµ РґРµРЅСЊ РЅРµРґРµР»Рё РѕС‚РїСЂР°РІР»РµРЅРёСЏ: ";
+        cout << "\nВведите день недели отправления: ";
         cin >> day;
         day++;
         strcpy_s(out->departureDate, daysOfWeek[day]);
     } while (day < 1 || day > 7 );
 
     do {
-        cout << "\nР’РІРµРґРёС‚Рµ РІСЂРµРјСЏ РѕС‚РїСЂР°РІР»РµРЅРёСЏ: ";
-        cout << "\nР§Р°СЃ - ";
+        cout << "\nВведите время отправления: ";
+        cout << "\nЧас - ";
         cin >> out->departureTime.hour;
         out->departureTime.minute = 0;
 
     } while(out->departureTime.hour < 0 || out->departureTime.hour > 23);
 
     do {
-        cout << "\nР’РІРµРґРёС‚Рµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРІРѕР±РѕРґРЅС‹С… РјРµСЃС‚";
+        cout << "\nВведите количество свободных мест";
         cin >> out->freeSpace;
     } while (out->freeSpace < 1);
 
@@ -354,7 +333,7 @@ Train **getTrainsFromFile(char *fileName, int *counter) {
 
     fstream inTrain(fileName, std::fstream::in | std::fstream::binary);
     if (!inTrain.is_open()) {
-        cerr << "РќРµР»СЊР·СЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» РґР»СЏ С‡С‚РµРЅРёСЏ\n";
+        cerr << "Нельзя открыть файл для чтения\n";
         return nullptr;
     }
     inTrain.clear();
@@ -369,14 +348,14 @@ Train **getTrainsFromFile(char *fileName, int *counter) {
     return outTrains;
 }
 
-void addTrainTo(char *fileName, Train *train) {
+void addTrainToFile(char *fileName, Train *train) {
     fstream addTrain(fileName, std::fstream::app | std::fstream::out | std::fstream::binary);
     if (!addTrain.is_open()) {
-        cout << "РќРµР»СЊР·СЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» РґР»СЏ С‡С‚РµРЅРёСЏ\n";
+        cout << "Нельзя открыть файл для чтения\n";
         return;
     }
     addTrain.write((char *) train, sizeof(struct Train));
     addTrain.close();
-    cout << "Р”РѕР±Р°РІР»РµРЅ РїРѕРµР·Рґ" << train << endl << endl;
+    cout << "Добавлен поезд" << train << endl << endl;
 }
 
