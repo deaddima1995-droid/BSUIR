@@ -88,6 +88,7 @@ void createFile(char *fileName);
 void readFile(char *fileName);
 void addTrainToFile(char *fileName, Train *train);
 int linearSearchFromFile(char* fileName, int start, int key);
+int linearSearch(Train **trains, int counter, int key);
 int getRandomNumber(int min, int max);
 int menu();
 Train *getRandomTrain();
@@ -125,19 +126,19 @@ int main() {
                 break;
             }
             case 4: {
+                cout << "Введите данные на какой поезд вы хотите сделать заказ:\n";
                 Train *train = getTrain();
                 int *countTrains = new int;
+                bool isHaveKey = false;
                 *countTrains = 0;
                 Train **trains = getTrainsFromFile(name, countTrains);
 
-                cout << "Введите данные на какой поезд вы хотите сделать заказ:\n";
+
                 fstream file(name, std::fstream::in | std::fstream::binary);
                 if (!file.is_open()) {
                     cerr << "Нельзя открыть файл для чтения\n";
                     break;
                 }
-                file.seekg(0);
-                file.close();
 
 
                 if (*countTrains < 1 || trains == nullptr) {
@@ -148,9 +149,85 @@ int main() {
                         cout << trains[i] << endl;
                     }
                 }
+                for (int i = 0; i < *countTrains; ++i) {
+                    if (train->freeSpace <= trains[i]->freeSpace) {
+                        if (train->departureTime.hour <= trains[i]->departureTime.hour) {
+                            if (strcmp(train->destination, trains[i]->destination) == 0) {
+                                if (strcmp(train->departureDate, trains[i]->departureDate) == 0) {
+                                    isHaveKey = true;
+                                    trains[i]->freeSpace -= train->freeSpace;
+                                    cout << "Заказ сделан.\n";
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isHaveKey) {
+                    file.clear();
+                    file.seekg(0);
+                    file.close();
+                    fstream outTrain(name, std::fstream::out | std::fstream::binary);
+                    for (int i = 0; i < *countTrains; ++i) {
+                        outTrain.write((char*) trains[i], sizeof(Train));
+                    }
+                } else {
+                    cout << "Поезда с таким описанием нет в базе, либо не хватает свободных мест\n";
+                }
+                file.close();
                 system("pause");
                 cin.get();
                 break;
+            }
+            case 5: {
+                cout << "Введите данные на какой поезд вы хотите сделать заказ:\n";
+                Train *train = getTrain();
+                int *countTrains = new int;
+                bool isHaveKey = false;
+                *countTrains = 0;
+                Train **trains = getTrainsFromFile(name, countTrains);
+
+
+                fstream file(name, std::fstream::in | std::fstream::binary);
+                if (!file.is_open()) {
+                    cerr << "Нельзя открыть файл для чтения\n";
+                    break;
+                }
+                if (*countTrains < 1 || trains == nullptr) {
+                    cout << "Поездов в файле нет.\n";
+                } else {
+                    cout << "Список поездов:\n";
+                    for (int i = 0; i < *countTrains; ++i) {
+                        cout << trains[i] << endl;
+                    }
+                }
+                int left = 0, right = *countTrains;
+                while (left <= right) {
+                    int mid = left + (right - left) / 2;
+                    if (trains[mid]->freeSpace >= train->freeSpace) {
+                        if (train->departureTime.hour <= trains[mid]->departureTime.hour) {
+                            if (strcmp(train->destination, trains[mid]->destination) == 0) {
+                                if (strcmp(train->departureDate, trains[mid]->departureDate) == 0) {
+                                    isHaveKey = true;
+                                    trains[mid]->freeSpace -= train->freeSpace;
+                                }
+                            }
+                        }
+                    } else if (trains[mid]->freeSpace < train->freeSpace){
+                        right = mid + 1;
+                    } else {
+                        right = mid - 1;
+                    }
+                }
+                if (left == right) {
+                    cout << "Поездов нет, заказа сделать нельзя";
+                } else {
+                    cout << "Заказ будет сделан";
+                }
+
+
+
+
+
             }
             case 0: {
                 return 0;
@@ -214,8 +291,8 @@ void readFile(char *fileName) {
     }
     inTrain.close();
 }
-int linearSearch(Train **trains, int count, int key) {
-    for (int i = 0; i < count; ++i) {
+int linearSearch(Train **trains, int counter, int key) {
+    for (int i = 0; i < counter; ++i) {
         if (trains[i]->freeSpace >= key) {
             return i;
         }
@@ -291,7 +368,7 @@ Train *getTrain() {
     do {
         cout << "\nВведите день недели отправления: ";
         cin >> day;
-        day++;
+        day--;
         strcpy_s(out->departureDate, daysOfWeek[day]);
     } while (day < 1 || day > 7 );
 
