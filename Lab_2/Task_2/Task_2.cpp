@@ -85,20 +85,13 @@ ostream &operator<<(ostream &out, Train *train) {
 }
 
 void createFile(char *fileName);
-
 void readFile(char *fileName);
-
 void addTrainToFile(char *fileName, Train *train);
-
-int linearSearch(Train **trains, int n, int key);
-
+int linearSearchFromFile(char* fileName, int start, int key);
 int getRandomNumber(int min, int max);
-
 int menu();
-
 Train *getRandomTrain();
 Train *getTrain();
-
 Train **getTrainsFromFile(char *fileName, int *counter);
 
 
@@ -132,13 +125,29 @@ int main() {
                 break;
             }
             case 4: {
+                Train *train = getTrain();
+                int *countTrains = new int;
+                *countTrains = 0;
+                Train **trains = getTrainsFromFile(name, countTrains);
 
+                cout << "Введите данные на какой поезд вы хотите сделать заказ:\n";
                 fstream file(name, std::fstream::in | std::fstream::binary);
                 if (!file.is_open()) {
                     cerr << "Нельзя открыть файл для чтения\n";
                     break;
                 }
+                file.seekg(0);
                 file.close();
+
+
+                if (*countTrains < 1 || trains == nullptr) {
+                    cout << "Поездов в файле нет.\n";
+                } else {
+                    cout << "Список поездов:\n";
+                    for (int i = 0; i < *countTrains; ++i) {
+                        cout << trains[i] << endl;
+                    }
+                }
                 system("pause");
                 cin.get();
                 break;
@@ -205,16 +214,39 @@ void readFile(char *fileName) {
     }
     inTrain.close();
 }
-
-int linearSearch(Train **trains, int n, int key) {
-    for (int i = 0; i < n; i++) {
-        if (trains[i]->freeSpace <= key) {
+int linearSearch(Train **trains, int count, int key) {
+    for (int i = 0; i < count; ++i) {
+        if (trains[i]->freeSpace >= key) {
             return i;
         }
     }
     return -1;
 }
 
+int linearSearchFromFile(char* fileName, int start, int key) {
+    fstream file(fileName, std::fstream::in | std::fstream::binary);
+    if (!file.is_open()) {
+        cerr << "Нельзя открыть файл\n";
+        return -1;
+    }
+    int pos = start;
+    file.seekg(pos);
+    Train temp;
+    while (!file.eof()) {
+        file.read((char*) &temp, sizeof(Train));
+        if (file.fail()) {
+            break;
+        }
+        if (temp.freeSpace <= key) {
+            file.close();
+            return pos;
+        }
+        pos += sizeof(Train);
+    }
+    file.close();
+    return -1;
+}
+/*
 int binarySearch(string filename, int key) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -243,7 +275,7 @@ int binarySearch(string filename, int key) {
     }
     file.close();
     return -1;
-}
+}*/
 
 int getRandomNumber(int min, int max) {
     return min + rand() % (max - min + 1);
@@ -295,7 +327,8 @@ Train **getTrainsFromFile(char *fileName, int *counter) {
     }
     inTrain.clear();
     inTrain.seekg(0, ios::end);
-    *counter = (int) inTrain.tellg();
+    *counter = inTrain.tellg() / sizeof(Train);
+    inTrain.seekg(0);
     auto **outTrains = new Train *[*counter];
     for (int i = 0; i < *counter; i++) {
         outTrains[i] = new Train;
