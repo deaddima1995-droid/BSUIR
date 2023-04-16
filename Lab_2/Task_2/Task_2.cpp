@@ -87,6 +87,8 @@ ostream &operator<<(ostream &out, Train *train) {
 void createFile(char *fileName);
 void readFile(char *fileName);
 void addTrainToFile(char *fileName, Train *train);
+void selectionSort(Train **trains, int counter);
+void quickSort(Train **trains, int low, int high);
 int linearSearchFromFile(char* fileName, int start, int key);
 int linearSearch(Train **trains, int counter, int key);
 int getRandomNumber(int min, int max);
@@ -424,5 +426,19 @@ void addTrainToFile(char *fileName, Train *train) {
     addTrain.write((char *) train, sizeof(struct Train));
     addTrain.close();
     cout << "Добавлен поезд:\n" << train << endl << endl;
+}
+
+void selectionSort(Train **trains, int counter) {
+    for (int i = 0; i < counter - 1; ++i) {
+        int min = i;
+        for (int j = i + 1; j < counter; ++j) {
+            if (trains[j]->freeSpace < trains[min]->freeSpace) {
+                min = j;
+            }
+        }
+        Train *temp = trains[i];
+        trains[i] = trains[min];
+        trains[min] = temp;
+    }
 }
 
