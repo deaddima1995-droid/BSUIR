@@ -89,8 +89,6 @@ void readFile(char *fileName);
 void addTrainToFile(char *fileName, Train *train);
 void selectionSort(Train **trains, int counter);
 void quickSort(Train **trains, int low, int high);
-int linearSearchFromFile(char* fileName, int start, int key);
-int linearSearch(Train **trains, int counter, int key);
 int getRandomNumber(int min, int max);
 int menu();
 Train *getRandomTrain();
@@ -172,6 +170,7 @@ int main() {
                     for (int i = 0; i < *countTrains; ++i) {
                         outTrain.write((char*) trains[i], sizeof(Train));
                     }
+                    outTrain.close();
                 } else {
                     cout << "Поезда с таким описанием нет в базе, либо не хватает свободных мест\n";
                 }
@@ -202,7 +201,8 @@ int main() {
                         cout << trains[i] << endl;
                     }
                 }
-                int left = 0, right = *countTrains;
+                file.close();
+                int left = 0, right = *countTrains - 1;
                 while (left <= right) {
                     int mid = left + (right - left) / 2;
                     if (trains[mid]->freeSpace >= train->freeSpace) {
@@ -211,11 +211,12 @@ int main() {
                                 if (strcmp(train->departureDate, trains[mid]->departureDate) == 0) {
                                     isHaveKey = true;
                                     trains[mid]->freeSpace -= train->freeSpace;
+                                    break;
                                 }
                             }
                         }
                     } else if (trains[mid]->freeSpace < train->freeSpace){
-                        right = mid + 1;
+                        left = mid + 1;
                     } else {
                         right = mid - 1;
                     }
@@ -224,12 +225,29 @@ int main() {
                     cout << "Поездов нет, заказа сделать нельзя";
                 } else {
                     cout << "Заказ будет сделан";
+                    fstream outTrain(name, std::fstream::out | std::fstream::binary);
+                    for (int i = 0; i < *countTrains; ++i) {
+                        outTrain.write((char*) trains[i], sizeof(Train));
+                    }
+                    outTrain.close();
                 }
 
-
-
-
-
+            }
+            case 6: {
+                int *counter = new int;
+                Train **trains = getTrainsFromFile(name,counter);
+                selectionSort(trains, *counter);
+                fstream file(name, std::fstream::out | std::fstream::binary);
+                file.clear();
+                file.seekg(0);
+                file.close();
+                if (trains == nullptr) break;
+                for (int i = 0; i < *counter; ++i) {
+                    if (trains[i] != nullptr) {
+                        addTrainToFile(name, trains[i]);
+                    }
+                }
+                break;
             }
             case 0: {
                 return 0;
@@ -293,69 +311,6 @@ void readFile(char *fileName) {
     }
     inTrain.close();
 }
-int linearSearch(Train **trains, int counter, int key) {
-    for (int i = 0; i < counter; ++i) {
-        if (trains[i]->freeSpace >= key) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int linearSearchFromFile(char* fileName, int start, int key) {
-    fstream file(fileName, std::fstream::in | std::fstream::binary);
-    if (!file.is_open()) {
-        cerr << "Нельзя открыть файл\n";
-        return -1;
-    }
-    int pos = start;
-    file.seekg(pos);
-    Train temp;
-    while (!file.eof()) {
-        file.read((char*) &temp, sizeof(Train));
-        if (file.fail()) {
-            break;
-        }
-        if (temp.freeSpace <= key) {
-            file.close();
-            return pos;
-        }
-        pos += sizeof(Train);
-    }
-    file.close();
-    return -1;
-}
-/*
-int binarySearch(string filename, int key) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        cerr << "Cannot open file\n";
-        return -1;
-    }
-    int left = 0, right = -1;
-    file.seekg(0, ios::end);
-    size_t size = file.tellg();
-    if (size > 0) {
-        right = (size / sizeof(int)) - 1;
-    }
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-        file.seekg(mid * sizeof(int), ios::beg);
-        int value;
-        file.read((char *) &value, sizeof(value));
-        if (value == key) {
-            file.close();
-            return mid;
-        } else if (value < key) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-    file.close();
-    return -1;
-}*/
-
 int getRandomNumber(int min, int max) {
     return min + rand() % (max - min + 1);
 }
@@ -440,5 +395,9 @@ void selectionSort(Train **trains, int counter) {
         trains[i] = trains[min];
         trains[min] = temp;
     }
+}
+
+void quickSort(Train **trains, int low, int high) {
+
 }
 
