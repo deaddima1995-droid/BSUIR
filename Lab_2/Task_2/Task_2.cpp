@@ -43,6 +43,7 @@ struct Time {
         this->hour = 0;
         this->minute = 0;
     }
+
     int hour, minute;
 };
 
@@ -85,14 +86,23 @@ ostream &operator<<(ostream &out, Train *train) {
 }
 
 void createFile(char *fileName);
+
 void readFile(char *fileName);
+
 void addTrainToFile(char *fileName, Train *train);
+
 void selectionSort(Train **trains, int counter);
+
 void quickSort(Train **trains, int low, int high);
+
 int getRandomNumber(int min, int max);
+
 int menu();
+
 Train *getRandomTrain();
+
 Train *getTrain();
+
 Train **getTrainsFromFile(char *fileName, int *counter);
 
 
@@ -120,7 +130,7 @@ int main() {
                 break;
             }
             case 3: {
-                addTrainToFile(name,getTrain());
+                addTrainToFile(name, getTrain());
                 system("pause");
                 cin.get();
                 break;
@@ -150,31 +160,27 @@ int main() {
                     }
                 }
                 for (int i = 0; i < *countTrains; ++i) {
-                    if (train->freeSpace <= trains[i]->freeSpace) {
-                        if (train->departureTime.hour <= trains[i]->departureTime.hour) {
-                            if (strcmp(train->destination, trains[i]->destination) == 0) {
-                                if (strcmp(train->departureDate, trains[i]->departureDate) == 0) {
-                                    isHaveKey = true;
-                                    trains[i]->freeSpace -= train->freeSpace;
-                                    cout << "Заказ сделан.\n";
-                                }
-                            }
-                        }
+                    if (train->freeSpace <= trains[i]->freeSpace &&
+                        train->departureTime.hour <= trains[i]->departureTime.hour &&
+                        strcmp(train->destination, trains[i]->destination) == 0 &&
+                        strcmp(train->departureDate, trains[i]->departureDate) == 0) {
+                        isHaveKey = true;
+                        trains[i]->freeSpace -= train->freeSpace;
+                        cout << "Заказ сделан.\n";
+                        break;
                     }
                 }
                 if (isHaveKey) {
                     file.clear();
-                    file.seekg(0);
                     file.close();
-                    fstream outTrain(name, std::fstream::out | std::fstream::binary);
                     for (int i = 0; i < *countTrains; ++i) {
-                        outTrain.write((char*) trains[i], sizeof(Train));
+                        addTrainToFile(name, trains[i]);
                     }
-                    outTrain.close();
                 } else {
                     cout << "Поезда с таким описанием нет в базе, либо не хватает свободных мест\n";
+                    file.close();
                 }
-                file.close();
+
                 system("pause");
                 cin.get();
                 break;
@@ -186,7 +192,6 @@ int main() {
                 bool isHaveKey = false;
                 *countTrains = 0;
                 Train **trains = getTrainsFromFile(name, countTrains);
-
 
                 fstream file(name, std::fstream::in | std::fstream::binary);
                 if (!file.is_open()) {
@@ -205,58 +210,81 @@ int main() {
                 int left = 0, right = *countTrains - 1;
                 while (left <= right) {
                     int mid = left + (right - left) / 2;
-                    if (trains[mid]->freeSpace >= train->freeSpace) {
-                        if (train->departureTime.hour <= trains[mid]->departureTime.hour) {
-                            if (strcmp(train->destination, trains[mid]->destination) == 0) {
-                                if (strcmp(train->departureDate, trains[mid]->departureDate) == 0) {
-                                    isHaveKey = true;
-                                    trains[mid]->freeSpace -= train->freeSpace;
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (trains[mid]->freeSpace < train->freeSpace){
-                        left = mid + 1;
+                    if (train->freeSpace == trains[mid]->freeSpace &&
+                        train->departureTime.hour <= trains[mid]->departureTime.hour &&
+                        strcmp(train->destination, trains[mid]->destination) == 0 &&
+                        strcmp(train->departureDate, trains[mid]->departureDate) == 0) {
+                            isHaveKey = true;
+                            trains[mid]->freeSpace -= train->freeSpace;
+                            break;
+                    } else if (trains[mid]->freeSpace < train->freeSpace) {
+                            left = mid + 1;
                     } else {
-                        right = mid - 1;
+                            right = mid - 1;
                     }
-                }
+            }
                 if (left == right) {
                     cout << "Поездов нет, заказа сделать нельзя";
+                    file.close();
                 } else {
+                    file.clear();
+                    file.close();
                     cout << "Заказ будет сделан";
-                    fstream outTrain(name, std::fstream::out | std::fstream::binary);
                     for (int i = 0; i < *countTrains; ++i) {
-                        outTrain.write((char*) trains[i], sizeof(Train));
-                    }
-                    outTrain.close();
-                }
-
-            }
-            case 6: {
-                int *counter = new int;
-                Train **trains = getTrainsFromFile(name,counter);
-                selectionSort(trains, *counter);
-                fstream file(name, std::fstream::out | std::fstream::binary);
-                file.clear();
-                file.seekg(0);
-                file.close();
-                if (trains == nullptr) break;
-                for (int i = 0; i < *counter; ++i) {
-                    if (trains[i] != nullptr) {
                         addTrainToFile(name, trains[i]);
                     }
                 }
-                break;
-            }
-            case 0: {
-                return 0;
-            }
-            default:
-                cout << "Введите пункт меню:";
-                break;
+
         }
+        case 6: {
+            int *counter = new int;
+            Train **trains = getTrainsFromFile(name, counter);
+            selectionSort(trains, *counter);
+            fstream file(name, std::fstream::out | std::fstream::binary);
+            file.clear();
+            file.seekg(0);
+            file.close();
+            if (trains == nullptr) break;
+            for (int i = 0; i < *counter; ++i) {
+                if (trains[i] != nullptr) {
+                    addTrainToFile(name, trains[i]);
+                }
+            }
+            cout << "Сортировка выполнена\n";
+            system("pause");
+            cin.get();
+            break;
+        }
+        case 7: {
+            int *counter = new int;
+            Train **trains = getTrainsFromFile(name, counter);
+            quickSort(trains, 0, *counter - 1);
+            fstream file(name, std::fstream::out | std::fstream::binary);
+            file.clear();
+            file.seekg(0);
+            file.close();
+            if (trains == nullptr) break;
+            for (int i = 0; i < *counter; ++i) {
+                if (trains[i] != nullptr) {
+                    addTrainToFile(name, trains[i]);
+                }
+            }
+            cout << "Сортировка выполнена\n";
+            system("pause");
+            cin.get();
+            break;
+        }
+        case 0: {
+            return 0;
+        }
+        default:
+            cout << "Введите пункт меню:";
+
+        break;
+
     }
+}
+
 }
 
 int menu() {
@@ -311,6 +339,7 @@ void readFile(char *fileName) {
     }
     inTrain.close();
 }
+
 int getRandomNumber(int min, int max) {
     return min + rand() % (max - min + 1);
 }
@@ -318,7 +347,7 @@ int getRandomNumber(int min, int max) {
 Train *getTrain() {
     auto *out = new Train();
     int day{};
-    char *destiny = new char ;
+    char *destiny = new char;
     cout << "\nВведите пункт назначения: ";
     cin >> destiny;
     strcpy_s(out->destination, destiny);
@@ -327,7 +356,7 @@ Train *getTrain() {
         cin >> day;
         day--;
         strcpy_s(out->departureDate, daysOfWeek[day]);
-    } while (day < 1 || day > 7 );
+    } while (day < 1 || day > 7);
 
     do {
         cout << "\nВведите время отправления: ";
@@ -335,7 +364,7 @@ Train *getTrain() {
         cin >> out->departureTime.hour;
         out->departureTime.minute = 0;
 
-    } while(out->departureTime.hour < 0 || out->departureTime.hour > 23);
+    } while (out->departureTime.hour < 0 || out->departureTime.hour > 23);
 
     do {
         cout << "\nВведите количество свободных мест: ";
@@ -387,7 +416,7 @@ void selectionSort(Train **trains, int counter) {
     for (int i = 0; i < counter - 1; ++i) {
         int min = i;
         for (int j = i + 1; j < counter; ++j) {
-            if (trains[j]->freeSpace < trains[min]->freeSpace) {
+            if (trains[j]->freeSpace > trains[min]->freeSpace) {
                 min = j;
             }
         }
@@ -397,7 +426,29 @@ void selectionSort(Train **trains, int counter) {
     }
 }
 
-void quickSort(Train **trains, int low, int high) {
+void quickSort(Train **trains, int left, int right) {
+    int i = left;
+    int j = right;
+    Train *tmp;
+    int pivot = trains[(left + right) / 2]->freeSpace;
 
+    while (i <= j) {
+        while (trains[i]->freeSpace < pivot)
+            i++;
+        while (trains[j]->freeSpace > pivot)
+            j--;
+        if (i <= j) {
+            tmp = trains[i];
+            trains[i] = trains[j];
+            trains[j] = tmp;
+            i++;
+            j--;
+        }
+    }
+
+    if (left < j)
+        quickSort(trains, left, j);
+    if (i < right)
+        quickSort(trains, i, right);
 }
 
