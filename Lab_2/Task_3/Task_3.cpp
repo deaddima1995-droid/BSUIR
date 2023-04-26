@@ -12,16 +12,20 @@ using namespace std;
 struct   Stack {
     int  info;
     Stack   *next;
-} ;
+};
 
-Stack * addToStack(Stack *, int number);
+Stack *addToStack(Stack*, int number);
+Stack *getStack(Stack*, int*);
+
 void Show (Stack *);
-void DelAll(Stack **);
+void delAll(Stack **);
+void del(Stack *);
 Stack * Task5 (Stack *);
 int getRandomNumber(int min, int max);
 
 int main() {
     srand(time(nullptr));
+    system("chcp 1251");
     Stack *bStack = nullptr;
     for (int i = 0; i < 10; ++i) {
         bStack = addToStack(bStack, getRandomNumber(0,10));
@@ -31,11 +35,19 @@ int main() {
     cin.get();
 }
 
-Stack * addToStack (Stack *b, int number){
-    Stack * temp = new Stack;
+Stack *addToStack (Stack *pStack, int number){
+    auto *temp = new Stack;
     temp -> info = number;
-    temp -> next = b;
+    temp -> next = pStack;
     return temp;
+}
+
+Stack *getStack(Stack *pStack, int *out) {
+    Stack *temp = pStack;
+    *out = pStack->info;
+    pStack = pStack->next;
+    delete temp;
+    return pStack;
 }
 
 void Show (Stack *pStack){
@@ -45,9 +57,19 @@ void Show (Stack *pStack){
     }
 }
 
+void delAll(Stack **stack) {
+    Stack *temp;
+    while (*stack != nullptr) {
+        temp = *stack;
+        *stack = (*stack)->next;
+        delete temp;
+    }
+}
+
 int getRandomNumber(int min, int max) {
     return min + rand() % (max - min + 1);
 }
+
 
 
 
