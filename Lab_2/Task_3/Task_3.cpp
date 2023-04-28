@@ -11,7 +11,7 @@ using namespace std;
 
 struct   Stack {
     int  info;
-    Stack   *next;
+    Stack *next;
 };
 
 Stack *addToStack(Stack *pStack, int number);
@@ -22,7 +22,18 @@ void del(Stack *);
 void consolePause();
 void selectionSort(Stack *pStack);
 void quickSort(Stack *pStack);
+
+void push(Stack** top, int data);
+
 int getRandomNumber(int min, int max);
+int pop(Stack** top);
+int peek(Stack* top);
+bool isEmpty(Stack* top);
+void quickSortStackUtil(Stack** top, Stack** end);
+void quickSortStack(Stack** top);
+void push(Stack** top, int data);
+
+
 
 int main() {
     srand(time(nullptr));
@@ -32,10 +43,11 @@ int main() {
     // Menu
     while(true) {
         cout << "1. Создать\n" <<
-             "2. Добавить\n" <<
-             "3. Просмотр\n" <<
-             "4. Удалить\n" <<
-             "0. Выход\n";
+                "2. Добавить\n" <<
+                "3. Просмотр\n" <<
+                "4. Удалить\n" <<
+                "5. Сортировка выбором\n" <<
+                "0. Выход\n";
         cin >> menu;
         switch (menu) {
             case 1: { // Создать стек из случайных чисел
@@ -68,8 +80,11 @@ int main() {
                 cout << "Стек удален\n";
             }
             case 5: { // Сортировка выбором
-
+                selectionSort(bStack);
                 break;
+            }
+            case 6: { // Quick sort
+                quickSortStack(&bStack);
             }
             case 0: {
                 return 1;
@@ -123,16 +138,96 @@ int getRandomNumber(int min, int max) {
 }
 
 void selectionSort(Stack *pStack) {
-    Stack tmp;
-
-    int count = 0;
-    Stack *curr = pStack->next;
-    while (curr != nullptr) {
-        count++;
-        curr = curr->next;
-    }
+    Stack *tmp = pStack;
+    Stack *iter;
+    int data;
+    do {
+        for (iter = pStack; iter->next != tmp; iter = iter->next) {
+            if (iter->next == nullptr) break;
+            if (iter->info > iter->next->info) {
+                data = iter->info;
+                iter->info = iter->next->info;
+                iter->next->info = data;
+            }
+        }
+        tmp = iter;
+    } while (iter != pStack);
 }
 
+void quickSort(Stack *pStack) {
+
+}
+
+void push(Stack** top, int data) {
+    Stack* new_node = new Stack;
+    new_node->info = data;
+    new_node->next = *top;
+    *top = new_node;
+}
+
+int pop(Stack** top) {
+    if (*top == nullptr) {
+        return INT_MAX;
+    }
+    int data = (*top)->info;
+    Stack* temp = *top;
+    *top = (*top)->next;
+    delete temp;
+    return data;
+}
+
+int peek(Stack* top) {
+    if (top == nullptr) {
+        return INT_MAX;
+    }
+    return top->info;
+}
+
+bool isEmpty(Stack* top) {
+    return top == nullptr;
+}
+
+Stack* partition(Stack** top, Stack** end, int pivot) {
+    Stack* current = *top;
+    Stack* prev = nullptr;
+    while (current != *end) {
+        if (current->info < pivot) {
+            if (*top == current) {
+                *top = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            current->next = nullptr;
+            push(top, current->info);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    return prev;
+}
+
+void quickSortStack(Stack** top) {
+    if (*top == nullptr) {
+        return;
+    }
+    Stack* end = *top;
+    while (end->next != nullptr) {
+        end = end->next;
+    }
+    quickSortStackUtil(top, &end);
+}
+
+void quickSortStackUtil(Stack** top, Stack** end) {
+    if (*top != *end) {
+        int pivot = pop(end);
+        Stack* partition_point = partition(top, end, pivot);
+        push(&partition_point->next, pivot);
+        quickSortStackUtil(top, &partition_point);
+        quickSortStackUtil(&partition_point->next, end);
+    }
+}
 
 
 
