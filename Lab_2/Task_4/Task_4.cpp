@@ -1,6 +1,5 @@
 /*Написать программу по созданию, добавлению (в начало, в конец),
   просмотру (с начала, с конца) и решению приведенной в подразделе 3.3 задачи для двунаправленных линейных списков.
-
  */
 
 #include <iostream>
@@ -22,7 +21,8 @@ struct Queue {
 };
 void addInEnd(Queue *queue, int value);
 void addInFront(Queue *queue, int value);
-void print(Queue *queue);
+void printFromFront(Queue *queue);
+void printFromEnd(Queue *queue);
 void consolePause();
 
 int main() {
@@ -36,7 +36,8 @@ int main() {
     addInFront(queue,8);
     addInEnd(queue, 11);
 
-    print(queue);
+    printFromFront(queue);
+    printFromEnd(queue);
     consolePause();
 }
 
@@ -66,11 +67,20 @@ void addInEnd(Queue *queue, int value) {
         queue->end = tmp;
     }
 }
-void print(Queue *queue) {
+void printFromFront(Queue *queue) {
     Node *current = queue->front;
     while (current != nullptr) {
         cout << current->data << "\t";
         current = current->next;
+    }
+    cout << endl;
+}
+
+void printFromEnd(Queue *queue) {
+    Node *current = queue->end;
+    while (current != nullptr) {
+        cout << current->data << "\t";
+        current = current->prev;
     }
     cout << endl;
 }
