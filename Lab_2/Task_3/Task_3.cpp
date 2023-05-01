@@ -15,29 +15,19 @@ struct   Stack {
 };
 
 Stack *addToStack(Stack *pStack, int number);
-Stack *getStack(Stack *pStack, int *out);
 void show (Stack *);
 void delAll(Stack **);
-void del(Stack *);
+Stack* del(Stack *);
 void consolePause();
-void selectionSort(Stack *pStack);
-void quickSort(Stack *pStack);
-
-void push(Stack** top, int data);
-
+void sortFromInfo(Stack *pStack);
+void sortFromAddress(Stack *&pStack);
 int getRandomNumber(int min, int max);
-int pop(Stack** top);
-int peek(Stack* top);
-bool isEmpty(Stack* top);
-void quickSortStackUtil(Stack** top, Stack** end);
-void quickSortStack(Stack** top);
-void push(Stack** top, int data);
-
 
 
 int main() {
     srand(time(nullptr));
     system("chcp 1251");
+    system("cls");
     Stack *bStack = nullptr;
     int menu{};
     // Menu
@@ -46,7 +36,9 @@ int main() {
                 "2. Добавить\n" <<
                 "3. Просмотр\n" <<
                 "4. Удалить\n" <<
-                "5. Сортировка выбором\n" <<
+                "5. Сортировка по значению\n" <<
+                "6. Сортировка по адресу\n" <<
+                "7. Удалить максимальный элемент\n" <<
                 "0. Выход\n";
         cin >> menu;
         switch (menu) {
@@ -76,15 +68,25 @@ int main() {
                 break;
             }
             case 4: {
-                delAll(&bStack);
+                bStack = del(bStack);
                 cout << "Стек удален\n";
             }
-            case 5: { // Сортировка выбором
-                selectionSort(bStack);
+            case 5: { // Сортировка по значению
+                sortFromInfo(bStack);
                 break;
             }
-            case 6: { // Quick sort
-                quickSortStack(&bStack);
+            case 6: { // Сортировка по адресу
+                sortFromAddress(bStack);
+                break;
+            }
+            case 7: {
+                Stack **maxStack = &bStack;
+                for (Stack **temp = &bStack; *temp; temp = &(*temp)->next)
+                    if ((*temp)->info > (*maxStack)->info) {
+                        maxStack = &(*temp);
+                    }
+                *maxStack = del(*maxStack);
+                break;
             }
             case 0: {
                 return 1;
@@ -103,20 +105,15 @@ Stack *addToStack (Stack *pStack, int number){
     temp -> next = pStack;
     return temp;
 }
-
-Stack *getStack(Stack *pStack, int *out) {
-    Stack *temp = pStack;
-    *out = pStack->info;
-    pStack = pStack->next;
-    delete temp;
-    return pStack;
-}
-
 void show (Stack *pStack){
     while (pStack != nullptr){
         cout << pStack -> info << "\t";
         pStack = pStack -> next;
     }
+}
+Stack* del(Stack *pStack) {
+    if (pStack == nullptr) return nullptr;
+    return pStack->next;
 }
 
 void delAll(Stack **stack) {
@@ -137,96 +134,32 @@ int getRandomNumber(int min, int max) {
     return min + rand() % (max - min + 1);
 }
 
-void selectionSort(Stack *pStack) {
-    Stack *tmp = pStack;
-    Stack *iter;
-    int data;
-    do {
-        for (iter = pStack; iter->next != tmp; iter = iter->next) {
-            if (iter->next == nullptr) break;
-            if (iter->info > iter->next->info) {
-                data = iter->info;
-                iter->info = iter->next->info;
-                iter->next->info = data;
+void sortFromInfo(Stack *pStack) {
+    for(Stack *temp = pStack; temp; temp = temp->next) {
+        for (Stack *nextTemp = temp->next; nextTemp; nextTemp = nextTemp->next) {
+            if (temp->info > nextTemp->info) {
+                int info = temp->info;
+                temp->info = nextTemp->info;
+                nextTemp->info = info;
             }
         }
-        tmp = iter;
-    } while (iter != pStack);
-}
-
-void quickSort(Stack *pStack) {
-
-}
-
-void push(Stack** top, int data) {
-    Stack* new_node = new Stack;
-    new_node->info = data;
-    new_node->next = *top;
-    *top = new_node;
-}
-
-int pop(Stack** top) {
-    if (*top == nullptr) {
-        return INT_MAX;
     }
-    int data = (*top)->info;
-    Stack* temp = *top;
-    *top = (*top)->next;
-    delete temp;
-    return data;
 }
 
-int peek(Stack* top) {
-    if (top == nullptr) {
-        return INT_MAX;
-    }
-    return top->info;
-}
-
-bool isEmpty(Stack* top) {
-    return top == nullptr;
-}
-
-Stack* partition(Stack** top, Stack** end, int pivot) {
-    Stack* current = *top;
-    Stack* prev = nullptr;
-    while (current != *end) {
-        if (current->info < pivot) {
-            if (*top == current) {
-                *top = current->next;
-            } else {
-                prev->next = current->next;
+void sortFromAddress(Stack *&pStack) {
+    pStack = addToStack(pStack, 0);
+    for (Stack *temp = pStack; temp; temp = temp->next) {
+        for (Stack *nextTemp = temp->next; nextTemp; nextTemp = nextTemp->next) {
+            if (nextTemp->next && temp->next->info > nextTemp->next->info) {
+                Stack *tStack = nextTemp->next;
+                nextTemp->next = tStack->next;
+                tStack->next = temp->next;
+                temp->next = tStack;
+                nextTemp = temp;
             }
-            current->next = nullptr;
-            push(top, current->info);
-            current = prev->next;
-        } else {
-            prev = current;
-            current = current->next;
         }
     }
-    return prev;
-}
-
-void quickSortStack(Stack** top) {
-    if (*top == nullptr) {
-        return;
-    }
-    Stack* end = *top;
-    while (end->next != nullptr) {
-        end = end->next;
-    }
-    quickSortStackUtil(top, &end);
-}
-
-void quickSortStackUtil(Stack** top, Stack** end) {
-    if (*top != *end) {
-        int pivot = pop(end);
-        Stack* partition_point = partition(top, end, pivot);
-        push(&partition_point->next, pivot);
-        quickSortStackUtil(top, &partition_point);
-        quickSortStackUtil(&partition_point->next, end);
-    }
+    pStack = del(pStack);
 }
 
 
