@@ -35,6 +35,7 @@ int main() {
     addInFront(queue,9);
     addInFront(queue,8);
     addInEnd(queue, 11);
+
     print(queue);
     consolePause();
 }
