@@ -77,10 +77,10 @@ namespace Task5 {
 		}
 		double Result(String^ str) {
 			stack p_stack;
-			char ch, ch1, ch2, chr;
-			double op1, op2, rez{};
+			char ch{}, ch1{}, ch2{}, chr{};
+			double op1{}, op2{}, rez{};
 			chr = 'z' + 1;
-			for (int i = 1; i < str->Length; ++i) {
+			for (int i = 0; i < str->Length; ++i) {
 				ch = str[i];
 				if (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^') {
 					p_stack.push(ch);
@@ -91,11 +91,11 @@ namespace Task5 {
 					op1 = safe_cast<double>(mas[safe_cast<int>(ch1)]);
 					op2 = safe_cast<double>(mas[safe_cast<int>(ch2)]);
 					switch (ch) {
-					case '+': rez = op2 + op1; break;
-					case '-': rez = op2 - op1; break;
-					case '*': rez = op2 * op1; break;
-					case '/': rez = op2 / op1; break;
-					case '^': rez = pow(op2, op1); break;
+						case '+': rez = op2 + op1; break;
+						case '-': rez = op2 - op1; break;
+						case '*': rez = op2 * op1; break;
+						case '/': rez = op2 / op1; break;
+						case '^': rez = pow(op2, op1); break;
 					}
 					mas[chr] = rez;
 					p_stack.push(chr);
@@ -270,6 +270,7 @@ namespace Task5 {
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(213, 29);
 			this->textBox1->TabIndex = 6;
+			this->textBox1->TextChanged += gcnew System::EventHandler(this, &Task_OPZ::textBox1_TextChanged);
 			// 
 			// textBox2
 			// 
@@ -353,13 +354,6 @@ private: System::Void Task_OPZ_Load(System::Object^ sender, System::EventArgs^ e
 	textBox2->Text = "";
 	String^ data = textBox1->Text;
 
-	for (int i = 0; i < data->Length; i++) {
-		if (data[i] >= 'a' && data[i] <= 'z') {
-			dataGridView1->Rows->Add();
-			dataGridView1->Rows[countSymbol]->Cells[0]->Value = data[i];
-			countSymbol++;
-		}
-	}
 	dataGridView1->Rows[0]->Cells[1]->Value = 7.6;
 	dataGridView1->Rows[1]->Cells[1]->Value = 4.8;
 	dataGridView1->Rows[2]->Cells[1]->Value = 3.5;
@@ -372,11 +366,22 @@ private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e
 	char ch;
 	String^ out = textBox2->Text;
 	for (int i = 0; i < countSymbol; ++i) {
-		ch = Convert::ToChar(dataGridView1->Rows[i]->Cells[0]->ToString());
-		Double^ dTemp = Convert::ToDouble(dataGridView1->Rows[i]->Cells[1]->ToString());
+		ch = Convert::ToChar(dataGridView1->Rows[i]->Cells[0]->Value);
+		Double^ dTemp = Convert::ToDouble(dataGridView1->Rows[i]->Cells[1]->Value);
 		mas[ch] = safe_cast<double>(dTemp);
 	}
 	textBox3->Text = Convert::ToString(Result(out));
+}
+private: System::Void textBox1_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+	countSymbol = 0;
+	dataGridView1->Rows->Clear();
+	for (int i = 0; i < textBox1->Text->Length; i++) {
+		if (textBox1->Text[i] >= 'a' && textBox1->Text[i] <= 'z') {
+			dataGridView1->Rows->Add();
+			dataGridView1->Rows[countSymbol]->Cells[0]->Value = textBox1->Text[i];
+			countSymbol++;
+		}
+	}
 }
 };
 }
