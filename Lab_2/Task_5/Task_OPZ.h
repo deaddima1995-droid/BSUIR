@@ -9,19 +9,13 @@ namespace Task5 {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	struct Stack_OPZ {
-		char data;
-		Stack_OPZ* next;
-	};
-
 	/// <summary>
 	/// Сводка для Task_OPZ
 	/// </summary>
 	public ref class Task_OPZ : public System::Windows::Forms::Form
 	{
 	public:
-
-
+		
 		Task_OPZ(void)
 		{
 			InitializeComponent();
