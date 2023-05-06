@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace Task5 {
 
@@ -8,6 +9,55 @@ namespace Task5 {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+
+	struct node {
+		char data;
+		node* next;
+	};
+
+	struct stack {
+		node* top;
+
+		stack() {
+			top = nullptr;
+		}
+
+		void push(char x) {
+			node *temp = new node;
+			temp->data = x;
+			temp->next = top;
+			top = temp;
+		}
+
+		char pop() {
+			char result = top->data;
+			node* temp = top->next;
+			delete top;
+			top = temp;
+			return result;
+		}
+
+		char peek() {
+			return top->data;
+		}
+
+		bool isEmpty() {
+			return top == nullptr;
+		}
+	};
+	int prior(char);
+
+
+	int prior(char symbol) {
+		switch (symbol) {
+			case '*': case'/': return 3;
+			case '-': case'+': return 2;
+			case '(': return 1;
+			default: return 0;
+		}
+	}
+
+
 
 	/// <summary>
 	/// Сводка для Task_OPZ
@@ -48,6 +98,12 @@ namespace Task5 {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Column1;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Column2;
 
+
+
+
+
+
+
 	private:
 		/// <summary>
 		/// Обязательная переменная конструктора.
@@ -61,6 +117,7 @@ namespace Task5 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::Windows::Forms::DataGridViewCellStyle^ dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
@@ -78,6 +135,7 @@ namespace Task5 {
 			// dataGridView1
 			// 
 			this->dataGridView1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
+			this->dataGridView1->AutoSizeRowsMode = System::Windows::Forms::DataGridViewAutoSizeRowsMode::AllCells;
 			this->dataGridView1->BackgroundColor = System::Drawing::Color::White;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(2) {
@@ -88,7 +146,7 @@ namespace Task5 {
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->RowHeadersVisible = false;
 			this->dataGridView1->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
-			this->dataGridView1->Size = System::Drawing::Size(239, 241);
+			this->dataGridView1->Size = System::Drawing::Size(239, 186);
 			this->dataGridView1->TabIndex = 0;
 			// 
 			// button1
@@ -176,19 +234,29 @@ namespace Task5 {
 			// 
 			// Column1
 			// 
+			dataGridViewCellStyle1->BackColor = System::Drawing::Color::Silver;
+			this->Column1->DefaultCellStyle = dataGridViewCellStyle1;
+			this->Column1->FillWeight = 50;
 			this->Column1->HeaderText = L"Имя";
+			this->Column1->MaxInputLength = 1;
 			this->Column1->Name = L"Column1";
+			this->Column1->ReadOnly = true;
+			this->Column1->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			this->Column1->SortMode = System::Windows::Forms::DataGridViewColumnSortMode::NotSortable;
 			// 
 			// Column2
 			// 
 			this->Column2->HeaderText = L"Значение";
 			this->Column2->Name = L"Column2";
+			this->Column2->Resizable = System::Windows::Forms::DataGridViewTriState::False;
 			// 
 			// Task_OPZ
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(608, 265);
+			this->AutoScroll = true;
+			this->AutoSize = true;
+			this->ClientSize = System::Drawing::Size(608, 213);
 			this->Controls->Add(this->textBox3);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->textBox1);
@@ -200,6 +268,7 @@ namespace Task5 {
 			this->Controls->Add(this->dataGridView1);
 			this->Name = L"Task_OPZ";
 			this->Text = L"Польская запись";
+			this->Load += gcnew System::EventHandler(this, &Task_OPZ::Task_OPZ_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -207,7 +276,53 @@ namespace Task5 {
 		}
 #pragma endregion
 	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
-		
+		stack p_stack;
+		Char symbol, temp;
+		String^ in = textBox1->Text;
+		String^ out = "";
+		int length = in->Length;
+		for (int i = 0; i < length; ++i) {
+			symbol = in[i];
+			if (symbol >= 'a' && symbol <= 'z') out += symbol;
+			if (symbol == '(') p_stack.push(symbol);
+			if (symbol == ')') {
+				while (p_stack.peek() != '(') {
+					temp = p_stack.pop();
+					out += temp;
+				}
+				temp = p_stack.pop();
+				
+			}
+			if (symbol == '*' || symbol == '/' || symbol == '+' || symbol == '-' || symbol == '^') {
+				while(!p_stack.isEmpty() && 
+					prior(p_stack.peek()) >= prior(symbol)) {
+					temp = p_stack.pop();
+					out += temp;
+				}
+				p_stack.push(symbol);
+			}
+		}
+		while (!p_stack.isEmpty()) {
+			temp = p_stack.pop();
+			out += temp;
+		}
+		textBox2->Text = out;
 	}
+private: System::Void Task_OPZ_Load(System::Object^ sender, System::EventArgs^ e) {
+	textBox1->Text = "a/(b+c-d*e)";
+	textBox2->Text = "";
+	char a = 'a';
+	String^ data = "abcde";
+	for (int i = 0; i < data->Length; i++) {
+		dataGridView1->Rows->Add();
+		dataGridView1->Rows[i]->Cells[0]->Value = data[i];
+		a++;
+	}
+	dataGridView1->Rows[0]->Cells[1]->Value = 7.6;
+	dataGridView1->Rows[1]->Cells[1]->Value = 4.8;
+	dataGridView1->Rows[2]->Cells[1]->Value = 3.5;
+	dataGridView1->Rows[3]->Cells[1]->Value = 9.1;
+	dataGridView1->Rows[4]->Cells[1]->Value = 0.2;
+}
 };
 }
