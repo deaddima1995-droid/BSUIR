@@ -1,0 +1,6 @@
+C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR/out/build/x64-Debug/CMakeFiles/Task_1.dir
+C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR/out/build/x64-Debug/CMakeFiles/Task_2.dir
+C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR/out/build/x64-Debug/CMakeFiles/Task_3.dir
+C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR/out/build/x64-Debug/CMakeFiles/Task_4.dir
+C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir

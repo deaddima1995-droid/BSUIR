@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Release-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "BSUIR",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Task_1::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Task_1-Release-86d96a02a06a414c56a5.json",
+					"name" : "Task_1",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Task_2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Task_2-Release-9beecdabb313810a7fcf.json",
+					"name" : "Task_2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Task_3::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Task_3-Release-b9b2bdb63b4c58c057fb.json",
+					"name" : "Task_3",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Task_4::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Task_4-Release-ae8f3b7bc552b8ce272f.json",
+					"name" : "Task_4",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR/out/build/x64-release",
+		"source" : "C:/Users/zhyra/source/repos/deaddima1995-droid/BSUIR"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}
