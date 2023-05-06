@@ -45,27 +45,65 @@ namespace Task5 {
 			return top == nullptr;
 		}
 	};
+	int countSymbol = 0;
 	int prior(char);
-
+	double mas[201];
 
 	int prior(char symbol) {
 		switch (symbol) {
+			case '^': return 4;
 			case '*': case'/': return 3;
 			case '-': case'+': return 2;
 			case '(': return 1;
 			default: return 0;
 		}
 	}
-
-
-
+	
 	/// <summary>
 	/// Сводка для Task_OPZ
 	/// </summary>
 	public ref class Task_OPZ : public System::Windows::Forms::Form
 	{
 	public:
-		
+		int getCountSymbol(char symbol) {
+			int count = 0;
+			for (int i = 0; i < textBox1->Text->Length; ++i) {
+				if (symbol == textBox1->Text[i]) {
+					return count;
+				}
+				count++;
+			}
+			return -1;
+		}
+		double Result(String^ str) {
+			stack p_stack;
+			char ch, ch1, ch2, chr;
+			double op1, op2, rez{};
+			chr = 'z' + 1;
+			for (int i = 1; i < str->Length; ++i) {
+				ch = str[i];
+				if (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^') {
+					p_stack.push(ch);
+				}
+				else {
+					ch1 = p_stack.pop();
+					ch2 = p_stack.pop();
+					op1 = safe_cast<double>(mas[safe_cast<int>(ch1)]);
+					op2 = safe_cast<double>(mas[safe_cast<int>(ch2)]);
+					switch (ch) {
+					case '+': rez = op2 + op1; break;
+					case '-': rez = op2 - op1; break;
+					case '*': rez = op2 * op1; break;
+					case '/': rez = op2 / op1; break;
+					case '^': rez = pow(op2, op1); break;
+					}
+					mas[chr] = rez;
+					p_stack.push(chr);
+					chr++;
+				}
+			}
+			return rez;
+		}
 		Task_OPZ(void)
 		{
 			InitializeComponent();
@@ -119,6 +157,8 @@ namespace Task5 {
 		{
 			System::Windows::Forms::DataGridViewCellStyle^ dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
+			this->Column1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Column2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
@@ -127,8 +167,6 @@ namespace Task5 {
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
-			this->Column1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->Column2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -148,6 +186,24 @@ namespace Task5 {
 			this->dataGridView1->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->dataGridView1->Size = System::Drawing::Size(239, 186);
 			this->dataGridView1->TabIndex = 0;
+			// 
+			// Column1
+			// 
+			dataGridViewCellStyle1->BackColor = System::Drawing::Color::Silver;
+			this->Column1->DefaultCellStyle = dataGridViewCellStyle1;
+			this->Column1->FillWeight = 50;
+			this->Column1->HeaderText = L"Имя";
+			this->Column1->MaxInputLength = 1;
+			this->Column1->Name = L"Column1";
+			this->Column1->ReadOnly = true;
+			this->Column1->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			this->Column1->SortMode = System::Windows::Forms::DataGridViewColumnSortMode::NotSortable;
+			// 
+			// Column2
+			// 
+			this->Column2->HeaderText = L"Значение";
+			this->Column2->Name = L"Column2";
+			this->Column2->Resizable = System::Windows::Forms::DataGridViewTriState::False;
 			// 
 			// button1
 			// 
@@ -171,6 +227,7 @@ namespace Task5 {
 			this->button2->TabIndex = 2;
 			this->button2->Text = L"Посчитать";
 			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &Task_OPZ::button2_Click);
 			// 
 			// label1
 			// 
@@ -232,24 +289,6 @@ namespace Task5 {
 			this->textBox3->Size = System::Drawing::Size(100, 29);
 			this->textBox3->TabIndex = 8;
 			// 
-			// Column1
-			// 
-			dataGridViewCellStyle1->BackColor = System::Drawing::Color::Silver;
-			this->Column1->DefaultCellStyle = dataGridViewCellStyle1;
-			this->Column1->FillWeight = 50;
-			this->Column1->HeaderText = L"Имя";
-			this->Column1->MaxInputLength = 1;
-			this->Column1->Name = L"Column1";
-			this->Column1->ReadOnly = true;
-			this->Column1->Resizable = System::Windows::Forms::DataGridViewTriState::False;
-			this->Column1->SortMode = System::Windows::Forms::DataGridViewColumnSortMode::NotSortable;
-			// 
-			// Column2
-			// 
-			this->Column2->HeaderText = L"Значение";
-			this->Column2->Name = L"Column2";
-			this->Column2->Resizable = System::Windows::Forms::DataGridViewTriState::False;
-			// 
 			// Task_OPZ
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -309,20 +348,35 @@ namespace Task5 {
 		textBox2->Text = out;
 	}
 private: System::Void Task_OPZ_Load(System::Object^ sender, System::EventArgs^ e) {
+	countSymbol = 0;
 	textBox1->Text = "a/(b+c-d*e)";
 	textBox2->Text = "";
-	char a = 'a';
-	String^ data = "abcde";
+	String^ data = textBox1->Text;
+
 	for (int i = 0; i < data->Length; i++) {
-		dataGridView1->Rows->Add();
-		dataGridView1->Rows[i]->Cells[0]->Value = data[i];
-		a++;
+		if (data[i] >= 'a' && data[i] <= 'z') {
+			dataGridView1->Rows->Add();
+			dataGridView1->Rows[countSymbol]->Cells[0]->Value = data[i];
+			countSymbol++;
+		}
 	}
 	dataGridView1->Rows[0]->Cells[1]->Value = 7.6;
 	dataGridView1->Rows[1]->Cells[1]->Value = 4.8;
 	dataGridView1->Rows[2]->Cells[1]->Value = 3.5;
 	dataGridView1->Rows[3]->Cells[1]->Value = 9.1;
 	dataGridView1->Rows[4]->Cells[1]->Value = 0.2;
+}
+private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
+	//
+
+	char ch;
+	String^ out = textBox2->Text;
+	for (int i = 0; i < countSymbol; ++i) {
+		ch = Convert::ToChar(dataGridView1->Rows[i]->Cells[0]->ToString());
+		Double^ dTemp = Convert::ToDouble(dataGridView1->Rows[i]->Cells[1]->ToString());
+		mas[ch] = safe_cast<double>(dTemp);
+	}
+	textBox3->Text = Convert::ToString(Result(out));
 }
 };
 }
